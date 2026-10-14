@@ -31,7 +31,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF6EE),
+      backgroundColor: const Color(0xFFF4ECE1),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -46,15 +46,21 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                     children: [
                       Expanded(
                         child: TextField(
+                          style: const TextStyle(color: Color(0xFF1A0C05), fontWeight: FontWeight.bold),
                           decoration: InputDecoration(
                             hintText: 'Cari judul / asal daerah...',
-                            prefixIcon: const Icon(Icons.search, color: Color(0xFF5C2C16)),
+                            hintStyle: const TextStyle(color: Color(0xFF8C7355)),
+                            prefixIcon: const Icon(Icons.search, color: Color(0xFF2A1408)),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: const Color(0xFFFFFDF9),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFFE5D5C5)),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Color(0xFFC7B299), width: 1.5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Color(0xFF2A1408), width: 2),
                             ),
                           ),
                           onChanged: (val) => setState(() => _searchQuery = val),
@@ -65,12 +71,14 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFFE5D5C5)),
+                            color: const Color(0xFFFFFDF9),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: const Color(0xFFC7B299), width: 1.5),
                           ),
                           child: DropdownButton<String>(
                             value: _selectedCategory,
+                            dropdownColor: const Color(0xFFFFFDF9),
+                            style: const TextStyle(color: Color(0xFF2A1408), fontWeight: FontWeight.bold),
                             items: ['Semua', 'Legenda', 'Mitos', 'Sejarah']
                                 .map((c) => DropdownMenuItem(value: c, child: Text('Filter Kategori: $c')))
                                 .toList(),
@@ -89,17 +97,17 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                Text('⚜️  ', style: TextStyle(fontSize: 18, color: Color(0xFF8B4513))),
+                Text('⚜️  ', style: TextStyle(fontSize: 20, color: Color(0xFF2A1408))),
                 Text(
                   'KATALOG CERITA POPULER',
                   style: TextStyle(
                     fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                    color: Color(0xFF3D1E0B),
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.3,
+                    color: Color(0xFF1A0C05),
                   ),
                 ),
-                Text('  ⚜️', style: TextStyle(fontSize: 18, color: Color(0xFF8B4513))),
+                Text('  ⚜️', style: TextStyle(fontSize: 20, color: Color(0xFF2A1408))),
               ],
             ),
             const SizedBox(height: 20),
@@ -141,8 +149,8 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
 
   Widget _buildCustomNavbar() {
     return Container(
-      color: const Color(0xFFFAF6EE),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      color: const Color(0xFF2A1408),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1000),
@@ -153,7 +161,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                   Text('🏰 ', style: TextStyle(fontSize: 22)),
                   Text(
                     'KisahLoka',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ],
               ),
@@ -164,7 +172,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
               const SizedBox(width: 16),
               GestureDetector(
                 onTap: () => widget.onSwitchTab(3),
-                child: const Icon(Icons.person_outline, color: Color(0xFF3D1E0B)),
+                child: const Icon(Icons.person_pin, color: Colors.amber, size: 28),
               ),
             ],
           ),
@@ -177,13 +185,13 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Text(
           title,
           style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? const Color(0xFF5C2C16) : Colors.black87,
-            fontSize: 14,
+            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+            color: isSelected ? Colors.amber : Colors.white70,
+            fontSize: 15,
           ),
         ),
       ),
@@ -193,19 +201,26 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   Widget _buildHeroBanner() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1000),
           child: Container(
-            padding: const EdgeInsets.all(36),
+            padding: const EdgeInsets.all(40),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               gradient: const LinearGradient(
-                colors: [Color(0xFFE8D3C0), Color(0xFFC7A88B)],
+                colors: [Color(0xFF3D1E0B), Color(0xFF1A0C05)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
             ),
             child: Column(
               children: [
@@ -213,27 +228,27 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                   'Jelajahi Cerita &\nWarisan Nusantara',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D1B10),
+                    fontSize: 30,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
                     height: 1.2,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 const Text(
                   'Platform digital edukasi budaya dan legenda rakyat Indonesia.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Color(0xFF5C2C16)),
+                  style: TextStyle(fontSize: 15, color: Color(0xFFE5D5C5), fontWeight: FontWeight.w500),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _categoryBadge('MTS : Mitos', const Color(0xFF8B4513)),
-                    const SizedBox(width: 8),
-                    _categoryBadge('LGN : Legenda', const Color(0xFFA0522D)),
-                    const SizedBox(width: 8),
-                    _categoryBadge('SJR : Sejarah', const Color(0xFF2E8B57)),
+                    _categoryBadge('MTS : Mitos', const Color(0xFFC2410C)),
+                    const SizedBox(width: 10),
+                    _categoryBadge('LGN : Legenda', const Color(0xFFD97706)),
+                    const SizedBox(width: 10),
+                    _categoryBadge('SJR : Sejarah', const Color(0xFF15803D)),
                   ],
                 )
               ],
@@ -246,26 +261,26 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
 
   Widget _categoryBadge(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
       ),
-      child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+      child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
     );
   }
 
   Widget _buildStoryCard(Story story) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5D5C5)),
+        color: const Color(0xFFFFFDF9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFC7B299), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           )
         ],
       ),
@@ -276,7 +291,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
             child: Container(
               width: double.infinity,
               decoration: const BoxDecoration(
-                color: Color(0xFFF3E9DC),
+                color: Color(0xFFE8D3C0),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               ),
               child: Stack(
@@ -287,20 +302,20 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                             child: Image.memory(story.imageBytes!, fit: BoxFit.cover),
                           )
-                        : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 50))),
+                        : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 55))),
                   ),
                   Positioned(
                     top: 8,
                     left: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF8B4513),
-                        borderRadius: BorderRadius.circular(4),
+                        color: const Color(0xFF2A1408),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         story.category.toUpperCase(),
-                        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.w900),
                       ),
                     ),
                   ),
@@ -309,41 +324,41 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   story.title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1A0C05)),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.location_on, size: 12, color: Colors.grey),
-                    const SizedBox(width: 2),
-                    Text(story.region, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    const Icon(Icons.location_on, size: 14, color: Color(0xFF3D1E0B)),
+                    const SizedBox(width: 4),
+                    Text(story.region, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF5C2C16))),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Text(
                   story.summary,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF3D1E0B), height: 1.3),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5C2C16),
+                      backgroundColor: const Color(0xFF2A1408),
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                     ),
                     onPressed: () => widget.onSelectStory(story),
-                    child: const Text('Baca Selengkapnya ➔', style: TextStyle(fontSize: 12)),
+                    child: const Text('Baca Selengkapnya ➔', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ),
                 )
               ],
@@ -357,11 +372,11 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   Widget _buildFooter() {
     return Container(
       width: double.infinity,
-      color: const Color(0xFF2D1B10),
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+      color: const Color(0xFF1A0C05),
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
       child: Column(
         children: const [
-          Text('KisahLoka', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          Text('KisahLoka', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 18)),
           SizedBox(height: 6),
           Text('© 2026 KisahLoka. Melestarikan Budaya Nusantara.', style: TextStyle(color: Colors.white60, fontSize: 12)),
         ],
@@ -383,13 +398,13 @@ class GuestDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF6EE),
+      backgroundColor: const Color(0xFFF4ECE1),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              color: const Color(0xFFFAF6EE),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              color: const Color(0xFF2A1408),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1000),
@@ -399,9 +414,9 @@ class GuestDetailScreen extends StatelessWidget {
                         onTap: onBack,
                         child: Row(
                           children: const [
-                            Icon(Icons.arrow_back, size: 16, color: Color(0xFF5C2C16)),
-                            SizedBox(width: 4),
-                            Text('Kembali ke Beranda', style: TextStyle(color: Color(0xFF5C2C16), fontWeight: FontWeight.bold)),
+                            Icon(Icons.arrow_back, size: 18, color: Colors.amber),
+                            SizedBox(width: 6),
+                            Text('Kembali ke Beranda Utama', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 14)),
                           ],
                         ),
                       ),
@@ -419,42 +434,43 @@ class GuestDetailScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF8B4513),
-                          borderRadius: BorderRadius.circular(4),
+                          color: const Color(0xFF2A1408),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           story.category.toUpperCase(),
-                          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: Colors.amber, fontSize: 11, fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         story.title.toUpperCase(),
-                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF2D1B10)),
+                        style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: Color(0xFF1A0C05)),
                       ),
                       Row(
                         children: [
-                          const Icon(Icons.location_on, size: 14, color: Colors.grey),
+                          const Icon(Icons.location_on, size: 16, color: Color(0xFF5C2C16)),
                           const SizedBox(width: 4),
-                          Text('Asal Daerah: ${story.region}', style: const TextStyle(color: Colors.grey)),
+                          Text('Asal Daerah: ${story.region}', style: const TextStyle(color: Color(0xFF5C2C16), fontWeight: FontWeight.bold)),
                         ],
                       ),
                       const SizedBox(height: 16),
                       Container(
-                        height: 280,
+                        height: 320,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE5D5C5),
-                          borderRadius: BorderRadius.circular(12),
+                          color: const Color(0xFFC7B299),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFF2A1408), width: 2),
                         ),
                         child: story.imageBytes != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.memory(story.imageBytes!, fit: BoxFit.cover),
                               )
-                            : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80))),
+                            : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 90))),
                       ),
                       const SizedBox(height: 24),
                       LayoutBuilder(
@@ -470,12 +486,12 @@ class GuestDetailScreen extends StatelessWidget {
                                   children: [
                                     const Text(
                                       '⚜️ Isi Cerita',
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
+                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1A0C05)),
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
                                       story.content,
-                                      style: const TextStyle(fontSize: 14, height: 1.6, color: Colors.black87),
+                                      style: const TextStyle(fontSize: 15, height: 1.7, color: Color(0xFF2A1408), fontWeight: FontWeight.w500),
                                     ),
                                   ],
                                 ),
@@ -513,26 +529,26 @@ class GuestDetailScreen extends StatelessWidget {
 
   Widget _buildMoralBox() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8F0),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE5D5C5)),
+        color: const Color(0xFFFFFDF9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFC7B299), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: const [
-              Icon(Icons.star, color: Color(0xFF8B4513), size: 18),
+              Icon(Icons.star, color: Color(0xFFD97706), size: 20),
               SizedBox(width: 6),
-              Text('Nilai Moral', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B))),
+              Text('Nilai Moral', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A0C05), fontSize: 15)),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             '"${story.moralValue}"',
-            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13),
+            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13, color: Color(0xFF3D1E0B), fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -541,38 +557,39 @@ class GuestDetailScreen extends StatelessWidget {
 
   Widget _buildMapBox() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE5D5C5)),
+        color: const Color(0xFFFFFDF9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFC7B299), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: const [
-              Icon(Icons.map, color: Color(0xFF8B4513), size: 18),
+              Icon(Icons.map, color: Color(0xFF2A1408), size: 20),
               SizedBox(width: 6),
-              Text('Peta Asal-Usul', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Peta Asal-Usul', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A0C05))),
             ],
           ),
           const SizedBox(height: 10),
           Container(
-            height: 120,
+            height: 130,
             decoration: BoxDecoration(
-              color: const Color(0xFFE5D5C5),
-              borderRadius: BorderRadius.circular(6),
+              color: const Color(0xFFE8D3C0),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFF2A1408), width: 1),
             ),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.location_on, color: Colors.red, size: 36),
+                  const Icon(Icons.location_on, color: Colors.red, size: 40),
                   const SizedBox(height: 4),
                   Text(
                     story.region,
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
+                    style: const TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF1A0C05), fontSize: 15),
                   ),
                 ],
               ),
@@ -624,6 +641,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         const SnackBar(
           content: Text('🔊 Memutar Narasi Suara Bahasa Indonesia...'),
           duration: Duration(seconds: 2),
+          backgroundColor: Color(0xFF2A1408),
         ),
       );
     } catch (e) {
@@ -644,6 +662,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         const SnackBar(
           content: Text('⏹️ Audio Diberhentikan.'),
           duration: Duration(seconds: 1),
+          backgroundColor: Color(0xFF2A1408),
         ),
       );
     } catch (e) {
@@ -662,28 +681,29 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE5D5C5)),
+        color: const Color(0xFFFFFDF9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFC7B299), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: const [
-              Icon(Icons.headphones, color: Color(0xFF8B4513), size: 18),
+              Icon(Icons.headphones, color: Color(0xFF2A1408), size: 20),
               SizedBox(width: 6),
-              Text('Audio Narasi Interaktif', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Audio Narasi Interaktif', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A0C05))),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: isPlaying ? const Color(0xFFD97706) : const Color(0xFF5C2C16),
+              backgroundColor: isPlaying ? const Color(0xFFD97706) : const Color(0xFF2A1408),
               foregroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(42),
+              minimumSize: const Size.fromHeight(44),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
               if (isPlaying) {
@@ -693,7 +713,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
               }
             },
             icon: Icon(isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill),
-            label: Text(isPlaying ? 'Hentikan Narasi Suara' : 'Dengarkan Narasi Suara'),
+            label: Text(isPlaying ? 'Hentikan Narasi Suara' : 'Dengarkan Narasi Suara', style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -710,8 +730,12 @@ class GuestExploreScreen extends StatelessWidget {
     var publishedStories = globalStories.where((s) => s.status == 'terbit').toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF6EE),
-      appBar: AppBar(title: const Text('Jelajah Peta Cerita Nusantara')),
+      backgroundColor: const Color(0xFFF4ECE1),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2A1408),
+        foregroundColor: Colors.white,
+        title: const Text('Jelajah Peta Cerita Nusantara', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Center(
@@ -722,11 +746,14 @@ class GuestExploreScreen extends StatelessWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  height: 220,
+                  height: 240,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8D3C0),
+                    color: const Color(0xFF3D1E0B),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFF5C2C16), width: 1.5),
+                    border: Border.all(color: const Color(0xFF2A1408), width: 2),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))
+                    ],
                   ),
                   child: Stack(
                     children: [
@@ -735,10 +762,10 @@ class GuestExploreScreen extends StatelessWidget {
                           '🗺️\nPETA SEBARAN LEGENDA INDONESIA',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF3D1E0B),
-                            letterSpacing: 1.1,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: 1.2,
                           ),
                         ),
                       ),
@@ -760,12 +787,12 @@ class GuestExploreScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
                 const Text(
                   'Titik Cerita Berdasarkan Daerah',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1A0C05)),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -773,20 +800,25 @@ class GuestExploreScreen extends StatelessWidget {
                   itemBuilder: (ctx, idx) {
                     final story = publishedStories[idx];
                     return Card(
+                      elevation: 3,
                       margin: const EdgeInsets.only(bottom: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: const BorderSide(color: Color(0xFFC7B299), width: 1.2),
+                      ),
                       child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         leading: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF3E9DC),
+                            color: const Color(0xFFE8D3C0),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(story.iconEmoji, style: const TextStyle(fontSize: 24)),
+                          child: Text(story.iconEmoji, style: const TextStyle(fontSize: 26)),
                         ),
-                        title: Text(story.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text('📍 ${story.region}  •  ${story.category}'),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF5C2C16)),
+                        title: Text(story.title, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A0C05))),
+                        subtitle: Text('📍 ${story.region}  •  ${story.category}', style: const TextStyle(color: Color(0xFF5C2C16), fontWeight: FontWeight.w600)),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Color(0xFF2A1408)),
                         onTap: () => onSelectStory(story),
                       ),
                     );
@@ -807,20 +839,21 @@ class GuestExploreScreen extends StatelessWidget {
         onSelect(story);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFF5C2C16),
+          color: const Color(0xFF2A1408),
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2))
+          border: Border.all(color: Colors.amber, width: 1.5),
+          boxShadow: const [
+            BoxShadow(color: Colors.black38, blurRadius: 6, offset: Offset(0, 3))
           ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.location_on, color: Colors.amber, size: 14),
+            const Icon(Icons.location_on, color: Colors.amber, size: 16),
             const SizedBox(width: 4),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            Text(title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -841,68 +874,77 @@ class GuestAccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF6EE),
-      appBar: AppBar(title: const Text('Masuk ke KisahLoka')),
+      backgroundColor: const Color(0xFFF4ECE1),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2A1408),
+        foregroundColor: Colors.white,
+        title: const Text('Masuk ke KisahLoka', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
+            constraints: const BoxConstraints(maxWidth: 440),
             child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 6,
+              color: const Color(0xFFFFFDF9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: const BorderSide(color: Color(0xFFC7B299), width: 1.5),
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(32),
+                padding: const EdgeInsets.all(36),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
-                        color: Color(0xFFF3E9DC),
+                        color: Color(0xFFE8D3C0),
                         shape: BoxShape.circle,
                       ),
-                      child: const Text('🏰', style: TextStyle(fontSize: 40)),
+                      child: const Text('🏰', style: TextStyle(fontSize: 48)),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     const Text(
                       'Selamat Datang',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
+                      style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Color(0xFF1A0C05)),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     const Text(
                       'Pilih peran masuk untuk melanjutkan ke portal KisahLoka',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                      style: TextStyle(color: Color(0xFF5C2C16), fontSize: 14, fontWeight: FontWeight.w600),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 32),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5C2C16),
+                          backgroundColor: const Color(0xFF2A1408),
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         onPressed: onLoginMember,
-                        icon: const Icon(Icons.person),
+                        icon: const Icon(Icons.person, color: Colors.amber),
                         label: const Text('Masuk sebagai Anggota', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF5C2C16),
-                          side: const BorderSide(color: Color(0xFF5C2C16), width: 1.5),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          foregroundColor: const Color(0xFF2A1408),
+                          side: const BorderSide(color: Color(0xFF2A1408), width: 2),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         onPressed: onLoginAdmin,
-                        icon: const Icon(Icons.admin_panel_settings),
-                        label: const Text('Masuk sebagai Admin', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                        icon: const Icon(Icons.admin_panel_settings, color: Color(0xFF2A1408)),
+                        label: const Text('Masuk sebagai Admin', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900)),
                       ),
                     ),
                   ],
