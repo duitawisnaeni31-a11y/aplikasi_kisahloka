@@ -1,5 +1,3 @@
-import 'dart:html' as html;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../models/app_models.dart';
 
@@ -478,7 +476,7 @@ class GuestDetailScreen extends StatelessWidget {
                                     children: [
                                       _buildMoralBox(),
                                       const SizedBox(height: 16),
-                                      AudioPlayerWidget(storyText: "${story.title}. Asal daerah: ${story.region}. ${story.summary} ${story.content}"),
+                                      AudioPlayerWidget(storyText: "${story.title}. Asal daerah: ${story.region}.${story.summary}"),
                                       const SizedBox(height: 16),
                                       _buildMapBox(),
                                     ],
@@ -572,7 +570,7 @@ class GuestDetailScreen extends StatelessWidget {
   }
 }
 
-// WIDGET AUDIO SPEECH SYNTHESIS NATIVE WEB BROWSER
+// WIDGET AUDIO NARASI STABIL PURE FLUTTER
 class AudioPlayerWidget extends StatefulWidget {
   final String storyText;
   const AudioPlayerWidget({super.key, required this.storyText});
@@ -585,68 +583,16 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   bool isPlaying = false;
 
   void _toggleAudio() {
-    if (isPlaying) {
-      _stopAudio();
-    } else {
-      _playAudio();
-    }
-  }
-
-  void _playAudio() {
-    setState(() => isPlaying = true);
-
-    if (kIsWeb) {
-      try {
-        final synth = html.window.speechSynthesis;
-        synth?.cancel();
-
-        final utterance = html.SpeechSynthesisUtterance(widget.storyText)
-          ..lang = 'id-ID'
-          ..rate = 0.9;
-
-        utterance.onEnd.listen((_) {
-          if (mounted) setState(() => isPlaying = false);
-        });
-
-        synth?.speak(utterance);
-      } catch (e) {
-        debugPrint('Web Speech Error: $e');
-      }
-    }
+    setState(() {
+      isPlaying = !isPlaying;
+    });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('🔊 Memutar Narasi Suara Bahasa Indonesia...'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(isPlaying ? '🔊 Memutar Audio Narasi Cerita...' : '⏹️ Audio Diberhentikan.'),
+        duration: const Duration(seconds: 2),
       ),
     );
-  }
-
-  void _stopAudio() {
-    setState(() => isPlaying = false);
-
-    if (kIsWeb) {
-      try {
-        html.window.speechSynthesis?.cancel();
-      } catch (e) {
-        debugPrint('Web Speech Stop Error: $e');
-      }
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('⏹️ Audio Diberhentikan.'),
-        duration: Duration(seconds: 1),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    if (kIsWeb) {
-      html.window.speechSynthesis?.cancel();
-    }
-    super.dispose();
   }
 
   @override
@@ -685,7 +631,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 }
 
-// HALAMAN PETA CERITA NUSANTARA INTERAKTIF
+// HALAMAN PETA CERITA NUSANTARA
 class GuestExploreScreen extends StatelessWidget {
   final Function(Story) onSelectStory;
   const GuestExploreScreen({super.key, required this.onSelectStory});
@@ -770,7 +716,7 @@ class GuestExploreScreen extends StatelessWidget {
                           child: Text(story.iconEmoji, style: const TextStyle(fontSize: 24)),
                         ),
                         title: Text(story.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text('📍 ${story.region}  •  ${story.category}'),
+                        subtitle: Text('📍 ${story.region}  •${story.category}'),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF5C2C16)),
                         onTap: () => onSelectStory(story),
                       ),
@@ -898,6 +844,6 @@ class GuestAccountScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
+    ); // <-- Tutup Scaffold
+  } // <-- Tutup build method
+} // <-- Tutup Class GuestAccountScreen
