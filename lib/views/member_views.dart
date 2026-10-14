@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import '../models/app_models.dart';
 
 class MemberDashboardScreen extends StatelessWidget {
@@ -36,14 +37,12 @@ class MemberDashboardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Tombol Kembali Ke Beranda Utam
                 TextButton.icon(
                   onPressed: onLogout,
                   icon: const Icon(Icons.arrow_back, color: Color(0xFF5C2C16)),
                   label: const Text('Kembali ke Beranda Utama', style: TextStyle(color: Color(0xFF5C2C16), fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 12),
-
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
@@ -94,7 +93,7 @@ class MemberDashboardScreen extends StatelessWidget {
                       child: Icon(Icons.add_circle, color: Color(0xFF5C2C16)),
                     ),
                     title: const Text('Kirimkan Cerita Baru', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    subtitle: const Text('Punya kisah/legenda lokal dari daerahmu? Tulis dan kirimkan sekarang.'),
+                    subtitle: const Text('Punya kisah/legenda lokal dari daerahmu? Bagikan sekarang.'),
                     trailing: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5C2C16)),
                       onPressed: () => onNavigateTab(2),
@@ -189,6 +188,24 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
   final _moralController = TextEditingController();
   final _contentController = TextEditingController();
   String _selectedCategory = 'Legenda';
+  String? _selectedFileName;
+
+  Future<void> _pickImage() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          _selectedFileName = result.files.first.name;
+        });
+      }
+    } catch (e) {
+      debugPrint("File Picker Error: $e");
+    }
+  }
 
   void _submitStory() {
     if (_formKey.currentState!.validate()) {
@@ -201,7 +218,7 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
         moralValue: _moralController.text,
         content: _contentController.text,
         iconEmoji: '📜',
-        status: 'pending', // PERSETUJUAN ADMIN: Status dikirim sebagai PENDING
+        status: 'pending',
         author: 'Anggota',
       );
 
@@ -209,7 +226,7 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Cerita berhasil dikirim! Menunggu moderasi dan persetujuan Admin.'),
+          content: Text('Cerita berhasil dikirim! Menunggu persetujuan Admin.'),
           backgroundColor: Color(0xFF5C2C16),
         ),
       );
@@ -219,6 +236,9 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
       _summaryController.clear();
       _moralController.clear();
       _contentController.clear();
+      setState(() {
+        _selectedFileName = null;
+      });
 
       if (widget.onSuccess != null) {
         widget.onSuccess!();
@@ -255,6 +275,49 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
                         style: TextStyle(color: Colors.grey, fontSize: 13),
                       ),
                       const Divider(height: 32),
+
+                      // FITUR UPLOAD GAMBAR PROFIL
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF8F0),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFFE5D5C5)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Foto Profil / Cover Cerita',
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF5C2C16),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: _pickImage,
+                                  icon: const Icon(Icons.upload_file),
+                                  label: const Text('Pilih Foto dari Galeri / Komputer'),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    _selectedFileName ?? 'Belum ada foto dipilih',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
                       TextFormField(
                         controller: _titleController,
                         decoration: InputDecoration(

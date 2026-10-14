@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/app_models.dart';
 
 class GuestHomeScreen extends StatefulWidget {
@@ -281,18 +282,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: story.imageUrl != null && story.imageUrl!.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                            child: Image.asset(
-                              story.imageUrl!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (ctx, err, stack) => Center(
-                                child: Text(story.iconEmoji, style: const TextStyle(fontSize: 50)),
-                              ),
-                            ),
-                          )
-                        : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 50))),
+                    child: Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 50))),
                   ),
                   Positioned(
                     top: 8,
@@ -448,24 +438,13 @@ class GuestDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Container(
-                        height: 300,
+                        height: 280,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: const Color(0xFFE5D5C5),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: story.imageUrl != null && story.imageUrl!.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  story.imageUrl!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (ctx, err, stack) => Center(
-                                    child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80)),
-                                  ),
-                                ),
-                              )
-                            : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80))),
+                        child: Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80))),
                       ),
                       const SizedBox(height: 24),
                       LayoutBuilder(
@@ -499,7 +478,7 @@ class GuestDetailScreen extends StatelessWidget {
                                     children: [
                                       _buildMoralBox(),
                                       const SizedBox(height: 16),
-                                      AudioPlayerWidget(storyText: story.summary + ". " + story.content),
+                                      AudioPlayerWidget(storyText: "${story.title}. Asal daerah: ${story.region}. ${story.summary} ${story.content}"),
                                       const SizedBox(height: 16),
                                       _buildMapBox(),
                                     ],
@@ -593,7 +572,7 @@ class GuestDetailScreen extends StatelessWidget {
   }
 }
 
-// FITUR SUPORT AUDIO PLAY DENGAN SUARA TEXT-TO-SPEECH
+// WIDGET AUDIO SPEECH SYNTHESIS NATIVE WEB BROWSER
 class AudioPlayerWidget extends StatefulWidget {
   final String storyText;
   const AudioPlayerWidget({super.key, required this.storyText});
@@ -606,43 +585,68 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   bool isPlaying = false;
 
   void _toggleAudio() {
-    setState(() {
-      isPlaying = !isPlaying;
-    });
+    if (isPlaying) {
+      _stopAudio();
+    } else {
+      _playAudio();
+    }
+  }
+
+  void _playAudio() {
+    setState(() => isPlaying = true);
 
     if (kIsWeb) {
-      // Panggil Web Speech Synthesis JS untuk memutar/menghentikan suara
-      if (isPlaying) {
-        _speakWeb(widget.storyText);
-      } else {
-        _stopWeb();
+      try {
+        final synth = html.window.speechSynthesis;
+        synth?.cancel();
+
+        final utterance = html.SpeechSynthesisUtterance(widget.storyText)
+          ..lang = 'id-ID'
+          ..rate = 0.9;
+
+        utterance.onEnd.listen((_) {
+          if (mounted) setState(() => isPlaying = false);
+        });
+
+        synth?.speak(utterance);
+      } catch (e) {
+        debugPrint('Web Speech Error: $e');
       }
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isPlaying ? '🔊 Memutar Audio Narasi Cerita...' : '⏹️ Audio Diberhentikan.'),
-        duration: const Duration(seconds: 2),
+      const SnackBar(
+        content: Text('🔊 Memutar Narasi Suara Bahasa Indonesia...'),
+        duration: Duration(seconds: 2),
       ),
     );
   }
 
-  void _speakWeb(String text) {
-    // Implementasi sintesis suara ringan
-    try {
-      final cleanText = text.replaceAll('\n', ' ');
-      // Fallback pesan instruksi audio web
-    } catch (e) {
-      debugPrint("Audio Error: $e");
+  void _stopAudio() {
+    setState(() => isPlaying = false);
+
+    if (kIsWeb) {
+      try {
+        html.window.speechSynthesis?.cancel();
+      } catch (e) {
+        debugPrint('Web Speech Stop Error: $e');
+      }
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('⏹️ Audio Diberhentikan.'),
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
-  void _stopWeb() {
-    try {
-      // Menghentikan audio
-    } catch (e) {
-      debugPrint("Stop Audio Error: $e");
+  @override
+  void dispose() {
+    if (kIsWeb) {
+      html.window.speechSynthesis?.cancel();
     }
+    super.dispose();
   }
 
   @override
@@ -673,7 +677,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
             ),
             onPressed: _toggleAudio,
             icon: Icon(isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill),
-            label: Text(isPlaying ? 'Hentikan Narasi Audio' : 'Dengarkan Narasi Suara'),
+            label: Text(isPlaying ? 'Hentikan Narasi Suara' : 'Dengarkan Narasi Suara'),
           )
         ],
       ),
@@ -681,7 +685,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 }
 
-// HALAMAN PETA CERITA LENGKAP & INTERAKTIF
+// HALAMAN PETA CERITA NUSANTARA INTERAKTIF
 class GuestExploreScreen extends StatelessWidget {
   final Function(Story) onSelectStory;
   const GuestExploreScreen({super.key, required this.onSelectStory});
@@ -701,7 +705,6 @@ class GuestExploreScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Visualisasi Peta Topografi
                 Container(
                   width: double.infinity,
                   height: 220,
@@ -743,13 +746,11 @@ class GuestExploreScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 const Text(
                   'Titik Cerita Berdasarkan Daerah',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF3D1E0B)),
                 ),
                 const SizedBox(height: 12),
-
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -812,7 +813,7 @@ class GuestExploreScreen extends StatelessWidget {
   }
 }
 
-// HALAMAN MASUK (LOGIN) DENGAN TAMPILAN ELEGAN NUSANTARA
+// HALAMAN LOGIN PERAN NUSANTARA
 class GuestAccountScreen extends StatelessWidget {
   final VoidCallback onLoginMember;
   final VoidCallback onLoginAdmin;
@@ -861,8 +862,6 @@ class GuestAccountScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                     const SizedBox(height: 28),
-
-                    // Tombol Anggota
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
@@ -878,8 +877,6 @@ class GuestAccountScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 14),
-
-                    // Tombol Admin
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
