@@ -280,7 +280,12 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 50))),
+                    child: story.imageBytes != null
+                        ? ClipRRect(
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                            child: Image.memory(story.imageBytes!, fit: BoxFit.cover),
+                          )
+                        : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 50))),
                   ),
                   Positioned(
                     top: 8,
@@ -442,7 +447,12 @@ class GuestDetailScreen extends StatelessWidget {
                           color: const Color(0xFFE5D5C5),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80))),
+                        child: story.imageBytes != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.memory(story.imageBytes!, fit: BoxFit.cover),
+                              )
+                            : Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80))),
                       ),
                       const SizedBox(height: 24),
                       LayoutBuilder(
@@ -476,7 +486,7 @@ class GuestDetailScreen extends StatelessWidget {
                                     children: [
                                       _buildMoralBox(),
                                       const SizedBox(height: 16),
-                                      AudioPlayerWidget(storyText: "${story.title}. Asal daerah: ${story.region}.${story.summary}"),
+                                      AudioPlayerWidget(storyText: "${story.title}. Asal daerah: ${story.region}. ${story.summary}"),
                                       const SizedBox(height: 16),
                                       _buildMapBox(),
                                     ],
@@ -570,7 +580,6 @@ class GuestDetailScreen extends StatelessWidget {
   }
 }
 
-// WIDGET AUDIO NARASI STABIL PURE FLUTTER
 class AudioPlayerWidget extends StatefulWidget {
   final String storyText;
   const AudioPlayerWidget({super.key, required this.storyText});
@@ -631,7 +640,6 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 }
 
-// HALAMAN PETA CERITA NUSANTARA
 class GuestExploreScreen extends StatelessWidget {
   final Function(Story) onSelectStory;
   const GuestExploreScreen({super.key, required this.onSelectStory});
@@ -716,7 +724,7 @@ class GuestExploreScreen extends StatelessWidget {
                           child: Text(story.iconEmoji, style: const TextStyle(fontSize: 24)),
                         ),
                         title: Text(story.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text('📍 ${story.region}  •${story.category}'),
+                        subtitle: Text('📍 ${story.region}  •  ${story.category}'),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF5C2C16)),
                         onTap: () => onSelectStory(story),
                       ),
@@ -759,7 +767,6 @@ class GuestExploreScreen extends StatelessWidget {
   }
 }
 
-// HALAMAN LOGIN PERAN NUSANTARA
 class GuestAccountScreen extends StatelessWidget {
   final VoidCallback onLoginMember;
   final VoidCallback onLoginAdmin;
@@ -844,6 +851,6 @@ class GuestAccountScreen extends StatelessWidget {
           ),
         ),
       ),
-    ); // <-- Tutup Scaffold
-  } // <-- Tutup build method
-} // <-- Tutup Class GuestAccountScreen
+    );
+  }
+}

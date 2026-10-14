@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class Story {
   final String id;
   final String title;
@@ -8,6 +10,7 @@ class Story {
   final String moralValue;
   final String iconEmoji;
   final String? imageUrl;
+  final Uint8List? imageBytes; // Penampung foto upload dari galeri/komputer
   String status; // 'terbit', 'pending', 'ditolak'
   bool isFavorite;
   final String author;
@@ -22,6 +25,7 @@ class Story {
     required this.moralValue,
     required this.iconEmoji,
     this.imageUrl,
+    this.imageBytes,
     this.status = 'terbit',
     this.isFavorite = false,
     required this.author,

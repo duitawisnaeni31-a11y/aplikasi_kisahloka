@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../models/app_models.dart';
@@ -188,6 +189,8 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
   final _moralController = TextEditingController();
   final _contentController = TextEditingController();
   String _selectedCategory = 'Legenda';
+
+  Uint8List? _uploadedImageBytes;
   String? _selectedFileName;
 
   Future<void> _pickImage() async {
@@ -195,11 +198,13 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         allowMultiple: false,
+        withData: true, // MEMBACA BYTE DATA SECARA LANGSUNG
       );
 
       if (result != null && result.files.isNotEmpty) {
         setState(() {
-          _selectedFileName = result.files.first.name;
+          _uploadedImageBytes = result.files.single.bytes;
+          _selectedFileName = result.files.single.name;
         });
       }
     } catch (e) {
@@ -218,6 +223,7 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
         moralValue: _moralController.text,
         content: _contentController.text,
         iconEmoji: '📜',
+        imageBytes: _uploadedImageBytes,
         status: 'pending',
         author: 'Anggota',
       );
@@ -237,6 +243,7 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
       _moralController.clear();
       _contentController.clear();
       setState(() {
+        _uploadedImageBytes = null;
         _selectedFileName = null;
       });
 
@@ -276,7 +283,7 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
                       ),
                       const Divider(height: 32),
 
-                      // FITUR UPLOAD GAMBAR PROFIL
+                      // UPLOAD + PREVIEW FOTO
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -313,6 +320,18 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
                                 ),
                               ],
                             ),
+                            if (_uploadedImageBytes != null) ...[
+                              const SizedBox(height: 12),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.memory(
+                                  _uploadedImageBytes!,
+                                  height: 180,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ]
                           ],
                         ),
                       ),
@@ -322,7 +341,7 @@ class _SendStoryScreenState extends State<SendStoryScreen> {
                         controller: _titleController,
                         decoration: InputDecoration(
                           labelText: 'Judul Cerita',
-                          hintText: 'Misal: Lutung Kasarung',
+                          hintText: 'Misal: Tangkuban Perahu',
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         validator: (v) => v == null || v.isEmpty ? 'Judul wajib diisi' : null,
