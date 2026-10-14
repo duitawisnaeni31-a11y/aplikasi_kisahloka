@@ -16,7 +16,7 @@ class KisahLokaApp extends StatefulWidget {
 }
 
 class _KisahLokaAppState extends State<KisahLokaApp> {
-  String _userRole = 'guest';
+  String _userRole = 'guest'; // 'guest', 'member', 'admin'
   int _currentIndex = 0;
   Story? _selectedStory;
 
@@ -26,40 +26,6 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
       _currentIndex = 0;
       _selectedStory = null;
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'KisahLoka',
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFFAF6EE),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF5C2C16),
-          primary: const Color(0xFF5C2C16),
-          secondary: const Color(0xFF8B4513),
-          surface: const Color(0xFFFFF8F0),
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF3D1E0B),
-          foregroundColor: Colors.white,
-          elevation: 2,
-        ),
-        cardTheme: CardThemeData(
-          color: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-      home: Scaffold(
-        body: _buildBody(),
-        bottomNavigationBar: _buildBottomNav(),
-      ),
-    );
   }
 
   Widget _buildBody() {
@@ -73,10 +39,6 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
     if (_userRole == 'guest') {
       switch (_currentIndex) {
         case 0:
-          return GuestHomeScreen(
-            onSelectStory: (s) => setState(() => _selectedStory = s),
-            onSwitchTab: (idx) => setState(() => _currentIndex = idx),
-          );
         case 1:
           return GuestHomeScreen(
             onSelectStory: (s) => setState(() => _selectedStory = s),
@@ -107,67 +69,83 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
           return SendStoryScreen(
             onSuccess: () => setState(() => _currentIndex = 0),
           );
-        case 3:
-          return AdminProfileScreen(onLogout: () => _switchRole('guest'));
         default:
           return const SizedBox();
       }
     } else {
+      // Peran Admin
       switch (_currentIndex) {
         case 0:
-          return AdminDashboardScreen(onSwitchTab: (idx) => setState(() => _currentIndex = idx));
+          return AdminDashboardScreen(onLogout: () => _switchRole('guest'));
         case 1:
           return const AdminModerationScreen();
         case 2:
-          return const AdminManageStoriesScreen();
-        case 3:
-          return AdminProfileScreen(onLogout: () => _switchRole('guest'));
+          return const AdminStoryManageScreen();
         default:
           return const SizedBox();
       }
     }
   }
 
-  Widget _buildBottomNav() {
-    List<BottomNavigationBarItem> items = [];
+  Widget? _buildBottomNav() {
+    if (_selectedStory != null) return null;
 
     if (_userRole == 'guest') {
-      items = const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
-        BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Kategori'),
-        BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Peta'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Masuk'),
-      ];
-    } else if (_userRole == 'member') {
-      items = const [
-        BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dasbor'),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorit'),
-        BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Kirim Cerita'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-      ];
-    } else {
-      items = const [
-        BottomNavigationBarItem(icon: Icon(Icons.admin_panel_settings), label: 'Dasbor Admin'),
-        BottomNavigationBarItem(icon: Icon(Icons.fact_check), label: 'Moderasi'),
-        BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Kelola Cerita'),
-        BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Keluar'),
-      ];
-    }
-
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: Color(0xFFD4C3B3), width: 1)),
-      ),
-      child: BottomNavigationBar(
+      return BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: (idx) => setState(() => _currentIndex = idx),
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF2D1B10),
-        selectedItemColor: const Color(0xFFFFC107),
-        unselectedItemColor: Colors.white70,
-        selectedFontSize: 12,
-        unselectedFontSize: 11,
-        items: items,
+        selectedItemColor: const Color(0xFF5C2C16),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Kategori'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Peta'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
+        ],
+      );
+    } else if (_userRole == 'member') {
+      return BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (idx) => setState(() => _currentIndex = idx),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF5C2C16),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dasbor'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorit'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Tulis Cerita'),
+        ],
+      );
+    } else {
+      return BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (idx) => setState(() => _currentIndex = idx),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF5C2C16),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.admin_panel_settings), label: 'Dasbor Admin'),
+          BottomNavigationBarItem(icon: Icon(Icons.fact_check), label: 'Moderasi'),
+          BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Kelola Cerita'),
+        ],
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'KisahLoka',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5C2C16)),
+        useMaterial3: true,
+        fontFamily: 'Roboto',
+      ),
+      home: Scaffold(
+        body: _buildBody(),
+        bottomNavigationBar: _buildBottomNav(),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../models/app_models.dart';
 
@@ -486,7 +488,9 @@ class GuestDetailScreen extends StatelessWidget {
                                     children: [
                                       _buildMoralBox(),
                                       const SizedBox(height: 16),
-                                      AudioPlayerWidget(storyText: "${story.title}. Asal daerah: ${story.region}. ${story.summary}"),
+                                      AudioPlayerWidget(
+                                        storyText: "${story.title}. Asal daerah: ${story.region}. ${story.summary} ${story.content}",
+                                      ),
                                       const SizedBox(height: 16),
                                       _buildMapBox(),
                                     ],
@@ -591,17 +595,68 @@ class AudioPlayerWidget extends StatefulWidget {
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   bool isPlaying = false;
 
-  void _toggleAudio() {
-    setState(() {
-      isPlaying = !isPlaying;
-    });
+  void _speak() {
+    if (!kIsWeb) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isPlaying ? '🔊 Memutar Audio Narasi Cerita...' : '⏹️ Audio Diberhentikan.'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    try {
+      final synth = html.window.speechSynthesis;
+      synth?.cancel();
+
+      final utterance = html.SpeechSynthesisUtterance(widget.storyText)
+        ..lang = 'id-ID'
+        ..rate = 0.9
+        ..pitch = 1.0;
+
+      utterance.onEnd.listen((_) {
+        if (mounted) {
+          setState(() {
+            isPlaying = false;
+          });
+        }
+      });
+
+      synth?.speak(utterance);
+      setState(() {
+        isPlaying = true;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('🔊 Memutar Narasi Suara Bahasa Indonesia...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      debugPrint("Speech Synthesis Error: $e");
+    }
+  }
+
+  void _stop() {
+    if (!kIsWeb) return;
+
+    try {
+      html.window.speechSynthesis?.cancel();
+      setState(() {
+        isPlaying = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('⏹️ Audio Diberhentikan.'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      debugPrint("Speech Stop Error: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    if (kIsWeb) {
+      html.window.speechSynthesis?.cancel();
+    }
+    super.dispose();
   }
 
   @override
@@ -630,10 +685,16 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
               foregroundColor: Colors.white,
               minimumSize: const Size.fromHeight(42),
             ),
-            onPressed: _toggleAudio,
+            onPressed: () {
+              if (isPlaying) {
+                _stop();
+              } else {
+                _speak();
+              }
+            },
             icon: Icon(isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill),
             label: Text(isPlaying ? 'Hentikan Narasi Suara' : 'Dengarkan Narasi Suara'),
-          )
+          ),
         ],
       ),
     );
