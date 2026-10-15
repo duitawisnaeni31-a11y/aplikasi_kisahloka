@@ -1,51 +1,34 @@
-import java.util.Properties
-
-plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    // Flutter Gradle Plugin
-    id("dev.flutter.flutter-gradle-plugin")
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.inputStream().use { localProperties.load(it) }
+val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
+rootProject.layout.buildDirectory.value(newBuildDir)
+
+subprojects {
+    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
+    project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 
-val flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
-val flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
+subprojects {
+    project.evaluationDependsOn(":app")
+}
 
-android {
-    namespace = "com.example.aplikasi_kisahloka"
-    
-    // Wajib 36 untuk mengatasi error dependency file_picker/lifecycle
-    compileSdk = 36
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
-    defaultConfig {
-        applicationId = "com.example.aplikasi_kisahloka"
-        minSdk = flutter.minSdkVersion
-        targetSdk = 34
-        versionCode = flutterVersionCode.toInt()
-        versionName = flutterVersionName
-    }
-
-    buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("debug")
+// MEMAKSA SEMUA PLUGIN (TERMASUK FILE_PICKER) MENGGUNAKAN COMPILE SDK 36
+subprojects {
+    afterEvaluate {
+        if (project.hasProperty("android")) {
+            val android = project.extensions.findByName("android")
+            if (android is com.android.build.gradle.BaseExtension) {
+                android.compileSdkVersion(36)
+            }
         }
     }
 }
 
-flutter {
-    source = "../.."
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
 }

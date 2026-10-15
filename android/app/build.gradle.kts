@@ -1,67 +1,45 @@
+import java.util.Properties
+
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    // Plugin Flutter dipanggil secara otomatis
-    id "dev.flutter.flutter-gradle-plugin"
+    id("com.android.application")
+    // Menggunakan plugin Kotlin bawaan Flutter (Menghilangkan Warning Breaking Changes)
+    id("kotlin-android")
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
+val flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
+val flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
 
 android {
-    namespace "com.example.aplikasi_kisahloka"
-    
-    // Wajib diubah ke 36 untuk mendukung plugin file_picker dan lifecycle terbaru
-    compileSdkVersion 36
+    namespace = "com.example.aplikasi_kisahloka"
+    compileSdk = 36
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     defaultConfig {
-        // ID aplikasi unik Anda
-        applicationId "com.example.aplikasi_kisahloka"
-        
-        // Menggunakan minSdkVersion bawaan Flutter
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 34
-        
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        applicationId = "com.example.aplikasi_kisahloka"
+        minSdk = flutter.minSdkVersion
+        targetSdk = 34
+        versionCode = flutterVersionCode.toInt()
+        versionName = flutterVersionName
     }
 
     buildTypes {
         release {
-            // Pengaturan penandatanganan aplikasi untuk rilisan
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
 
 flutter {
-    source '../..'
-}
-
-dependencies {
-    // Dependency bawaan Kotlin/Android
+    source = "../.."
 }
