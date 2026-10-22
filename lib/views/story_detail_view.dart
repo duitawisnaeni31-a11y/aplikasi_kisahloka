@@ -47,7 +47,7 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
     } else {
       setState(() => isLoadingAudio = true);
       try {
-        String url = widget.story.audioUrl ?? 'https://ia800201.us.archive.org/12/items/IndonesianStoryAudio/Sangkuriang.mp3';
+        String url = widget.story.audioUrl ?? 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg';
         await _audioPlayer.play(UrlSource(url));
       } catch (e) {
         if (mounted) {
@@ -118,7 +118,7 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
               child: ListTile(
                 leading: const Icon(Icons.volume_up, color: Color(0xFFE5A93C), size: 32),
                 title: Text('Dengarkan Suara Narasi Cerita', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Text(isPlaying ? 'Sedang Memutar Suara Narasi...' : 'Tekan Play untuk Mendengarkan Narasi', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12)),
+                subtitle: Text(isPlaying ? 'Sedang Memutar Audio...' : 'Tekan Play untuk Mendengarkan Audio', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12)),
                 trailing: isLoadingAudio
                     ? const CircularProgressIndicator(color: Color(0xFFE5A93C))
                     : IconButton(

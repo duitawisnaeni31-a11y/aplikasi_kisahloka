@@ -35,7 +35,6 @@ class Story {
   });
 }
 
-// Global List Cerita dengan Gambar yang Sangat Relevan
 List<Story> globalStories = [
   Story(
     id: '1',
@@ -44,12 +43,12 @@ List<Story> globalStories = [
     region: 'Jawa Barat',
     summary: 'Kisah asal usul Gunung Tangkuban Perahu dan Pemuda Sangkuriang.',
     content:
-        'Pada zaman dahulu di Jawa Barat, hiduplah seorang wanita cantik bernama Dayang Sumbi dan putranya, Sangkuriang. Suatu hari saat berburu, Sangkuriang yang marah secara tidak sengaja membunuh anjing kesayangan mereka, Tumang, yang sebenarnya adalah ayahnya sendiri yang dikutuk.\n\nMengetahui hal tersebut, Dayang Sumbi sangat marah dan memukul kepala Sangkuriang hingga meninggalkan bekas luka. Sangkuriang pun pergi mengembara bertahun-tahun. Ketika dewasa, Sangkuriang kembali ke kampung halamannya dan jatuh cinta pada seorang wanita cantik tanpa menyadari bahwa wanita itu adalah ibunya sendiri.\n\nDayang Sumbi mengenali bekas luka di kepala Sangkuriang. Untuk menggagalkan pernikahan, ia memberi syarat mustahil: membuat perahu besar dan membendung sungai Citarum dalam satu malam. Dengan bantuan jin, Sangkuriang hampir berhasil. Dayang Sumbi menggelar kain sutra merah di timur agar fajar tampak menyingsing lebih cepat. Sangkuriang yang merasa gagal mengamuk dan menendang perahu buatannya hingga terbalik, membentuk Gunung Tangkuban Perahu.',
-    moralValue: 'Kendalikan emosi dan amarah, serta selalu jujur dan patuh kepada orang tua.',
-    imageUrl: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800', // Gambar Gunung & Kawah Tangkuban Perahu
-    audioUrl: 'https://ia800201.us.archive.org/12/items/IndonesianStoryAudio/Sangkuriang.mp3',
+        'Pada zaman dahulu di Jawa Barat, hiduplah seorang wanita cantik bernama Dayang Sumbi dan putranya, Sangkuriang. Suatu hari saat berburu, Sangkuriang secara tidak sengaja membunuh anjing kesayangan mereka, Tumang, yang sebenarnya adalah ayahnya sendiri.\n\nMengetahui hal tersebut, Dayang Sumbi sangat marah dan memukul kepala Sangkuriang. Sangkuriang pun pergi mengembara bertahun-tahun. Ketika dewasa, Sangkuriang kembali dan jatuh cinta pada Dayang Sumbi tanpa menyadari wanita itu ibunya.\n\nDayang Sumbi memberi syarat membuat perahu besar dalam satu malam. Sebelum fajar, Dayang Sumbi menggelar kain sutra merah agar fajar tampak menyingsing. Sangkuriang yang merasa gagal mengamuk dan menendang perahu buatannya hingga terbalik, membendung Gunung Tangkuban Perahu.',
+    moralValue: 'Kendalikan emosi dan selalu jujur serta patuh kepada orang tua.',
+    imageUrl: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800',
+    audioUrl: 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg',
     iconEmoji: '🏔️',
-    isFavorite: false,
+    isFavorite: true,
   ),
   Story(
     id: '2',
@@ -58,10 +57,10 @@ List<Story> globalStories = [
     region: 'DI Yogyakarta',
     summary: 'Kisah seribu candi dalam satu malam dan terbentuknya Candi Prambanan.',
     content:
-        'Kerajaan Pengging yang dipimpin Bandung Bondowoso menaklukkan Kerajaan Prambanan. Bandung Bondowoso yang terpikat oleh kecantikan putri Prambanan, Roro Jonggrang, berniat untuk melamarnya.\n\nRoro Jonggrang tidak ingin menikahi pembunuh ayahnya, namun takut menolak secara langsung. Ia memberi syarat agar Bandung Bondowoso membuatkan 1.000 candi dalam waktu satu malam. Bandung Bondowoso menyetujuinya dan memanggil ribuan jin untuk membantunya.\n\nMelihat pembuatan candi hampir selesai sebelum fajar, Roro Jonggrang membangunkan para wanita desa untuk menumbuk padi dan membakar jerami agar suasana terang seperti pagi hari. Para jin berlarian ketakutan karena mengira matahari telah terbit. Bandung Bondowoso murka saat tahu ditipu, dan mengutuk Roro Jonggrang menjadi patung ke-1.000 untuk melengkapi Candi Prambanan.',
-    moralValue: 'Jangan gunakan tipu daya untuk menyelesaikan masalah, dan penuhilah janji yang telah dibuat.',
-    imageUrl: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=800', // Gambar Kemegahan Candi Prambanan
-    audioUrl: 'https://ia800201.us.archive.org/12/items/IndonesianStoryAudio/RoroJonggrang.mp3',
+        'Bandung Bondowoso menaklukkan Kerajaan Prambanan dan berniat melamar putri Roro Jonggrang. Roro Jonggrang memberi syarat membuatkan 1.000 candi dalam satu malam.\n\nMelihat candi hampir selesai, Roro Jonggrang membangunkan wanita desa untuk menumbuk padi dan membakar jerami agar suasana terang. Para jin berlarian karena mengira hari telah pagi. Bandung Bondowoso murka dan mengutuk Roro Jonggrang menjadi patung ke-1.000.',
+    moralValue: 'Jangan gunakan tipu daya untuk menyelesaikan masalah.',
+    imageUrl: 'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?w=800',
+    audioUrl: 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg',
     iconEmoji: '🏛️',
     isFavorite: true,
   ),
@@ -72,10 +71,10 @@ List<Story> globalStories = [
     region: 'Jawa Barat',
     summary: 'Peristiwa pembumihantuan kota Bandung demi mempertahankan kemerdekaan.',
     content:
-        'Peristiwa Bandung Lautan Api adalah pembumihantuan kota Bandung pada tanggal 23 Maret 1946. Sekitar 200.000 penduduk Bandung membakar rumah dan meninggalkan kota menuju pegunungan di selatan Bandung dalam waktu tujuh jam.\n\nLangkah ini diambil oleh para pejuang Indonesia agar sekutu dan NICA tidak dapat menggunakan kota Bandung sebagai pangkalan militer strategis. Mohammad Toha dan Ramdan, dua anggota milisi BBRI, mengorbankan nyawa mereka untuk meledakkan gudang amunisi sekutu di Dayeuhkolot.\n\nPeristiwa pengorbanan besar ini mengilhami lahirnya lagu perjuangan populer "Halo-Halo Bandung".',
-    moralValue: 'Semangat pengorbanan dan kebersamaan demi membela kedaulatan bangsa.',
-    imageUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800', // Visual Kobaran Api Perjuangan
-    audioUrl: 'https://ia800201.us.archive.org/12/items/IndonesianStoryAudio/BandungLautanApi.mp3',
+        'Peristiwa Bandung Lautan Api adalah pembumihantuan kota Bandung pada tanggal 23 Maret 1946. Sekitar 200.000 penduduk Bandung membakar rumah dan meninggalkan kota menuju pegunungan di selatan Bandung dalam waktu tujuh jam.\n\nLangkah ini diambil oleh para pejuang Indonesia agar sekutu dan NICA tidak dapat menggunakan kota Bandung sebagai pangkalan militer strategis. Mohammad Toha meledakkan gudang amunisi sekutu di Dayeuhkolot.',
+    moralValue: 'Semangat pengorbanan demi membela kedaulatan bangsa.',
+    imageUrl: 'https://images.unsplash.com/photo-1508873696983-2df515122519?w=800', // Gambar Api & Perjuangan
+    audioUrl: 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg',
     iconEmoji: '🔥',
     isFavorite: false,
   ),
@@ -86,10 +85,10 @@ List<Story> globalStories = [
     region: 'Sumatera Barat',
     summary: 'Kisah anak durhaka yang dikutuk menjadi batu oleh ibunya.',
     content:
-        'Pada zaman dahulu kala, di sebuah desa nelayan di Sumatera Barat, hiduplah seorang anak bernama Malin bersama ibunya yang sudah tua. Malin adalah anak yang rajin dan bercita-cita tinggi. Demi mengubah nasib keluarga, Malin memutuskan untuk merantau ke negeri seberang dengan menumpang kapal dagang yang kaya raya.\n\nBertahun-tahun berlalu, Malin berhasil menjadi pedagang sukses dan kaya raya serta menikahi wanita berdarah bangsawan. Ketika kapalnya bersandar di kampung halamannya, ibunya yang mendengar kabar gembira langsung berlari memeluk Malin. Namun Malin merasa malu pada istrinya dan menolak mengakui wanita tua renta itu sebagai ibunya.\n\nSakit hati karena dicampakkan dan dihina, sang ibu berdoa memohon keadilan. Seketika langit menjadi gelap, badai dahsyat menghancurkan kapal Malin, dan Malin bertekuk lutut memohon ampun sebelum seluruh tubuhnya mengeras berubah menjadi batu.',
+        'Pada zaman dahulu kala di Sumatera Barat, hiduplah anak bernama Malin bersama ibunya. Malin merantau dan berhasil menjadi pedagang kaya raya.\n\nKetika kapalnya bersandar di kampung halaman, ibunya berlari memeluk Malin. Namun Malin malu dan menolak mengakui wanita tua renta itu sebagai ibunya.\n\nSakit hati, sang ibu berdoa memohon keadilan. Badai dahsyat menghancurkan kapal Malin, dan Malin bertekuk lutut memohon ampun sebelum seluruh tubuhnya mengeras berubah menjadi batu.',
     moralValue: 'Hormatilah orang tua, khususnya ibu yang telah melahirkan dan membesarkan kita.',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800', // Pesisir Pantai Malin Kundang
-    audioUrl: 'https://ia800201.us.archive.org/12/items/IndonesianStoryAudio/MalinKundang.mp3',
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800', // Gambar Pantai Batu Pesisir
+    audioUrl: 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg',
     iconEmoji: '⛵',
     isFavorite: true,
   ),

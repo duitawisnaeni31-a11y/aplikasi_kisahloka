@@ -61,10 +61,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                     ),
                     children: const [
                       TextSpan(text: 'Jelajahi Cerita &\nWarisan '),
-                      TextSpan(
-                        text: 'Nusantara',
-                        style: TextStyle(color: Color(0xFFE5A93C)),
-                      ),
+                      TextSpan(text: 'Nusantara', style: TextStyle(color: Color(0xFFE5A93C))),
                     ],
                   ),
                 ),
@@ -81,10 +78,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
 
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-            ),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
             child: Row(
               children: [
                 const Icon(Icons.filter_list, color: Color(0xFF5A3D28), size: 20),
@@ -98,10 +92,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                       items: ['Semua', 'Legenda', 'Mitos', 'Sejarah'].map((String category) {
                         return DropdownMenuItem<String>(
                           value: category,
-                          child: Text(
-                            'Filter Kategori: $category',
-                            style: GoogleFonts.poppins(fontSize: 13, color: const Color(0xFF322219)),
-                          ),
+                          child: Text('Filter Kategori: $category', style: GoogleFonts.poppins(fontSize: 13, color: const Color(0xFF322219))),
                         );
                       }).toList(),
                       onChanged: (val) {
@@ -123,10 +114,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                 child: const Icon(Icons.diamond, color: Colors.white, size: 14),
               ),
               const SizedBox(width: 10),
-              Text(
-                'KATALOG CERITA POPULER',
-                style: GoogleFonts.playfairDisplay(fontSize: 17, fontWeight: FontWeight.bold, color: const Color(0xFF322219)),
-              ),
+              Text('KATALOG CERITA POPULER', style: GoogleFonts.playfairDisplay(fontSize: 17, fontWeight: FontWeight.bold, color: const Color(0xFF322219))),
             ],
           ),
           const SizedBox(height: 14),
@@ -174,36 +162,22 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                                     children: [
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF322219),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
+                                        decoration: BoxDecoration(color: const Color(0xFF322219), borderRadius: BorderRadius.circular(12)),
                                         child: Text(
                                           story.category.toUpperCase(),
                                           style: GoogleFonts.poppins(color: const Color(0xFFE5A93C), fontSize: 10, fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                       IconButton(
-                                        icon: Icon(
-                                          story.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                          color: Colors.red,
-                                        ),
+                                        icon: Icon(story.isFavorite ? Icons.favorite : Icons.favorite_border, color: Colors.red),
                                         onPressed: () {
-                                          setState(() {
-                                            story.isFavorite = !story.isFavorite;
-                                          });
+                                          setState(() => story.isFavorite = !story.isFavorite);
                                         },
                                       )
                                     ],
                                   ),
-                                  Text(
-                                    story.title,
-                                    style: GoogleFonts.playfairDisplay(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF2A1B12)),
-                                  ),
-                                  Text(
-                                    'Asal: ${story.region}',
-                                    style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey.shade600),
-                                  ),
+                                  Text(story.title, style: GoogleFonts.playfairDisplay(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF2A1B12))),
+                                  Text('Asal: ${story.region}', style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey.shade600)),
                                 ],
                               ),
                             ),
@@ -241,11 +215,7 @@ class CategoryViewScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Expanded(
             child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 2.2,
-                mainAxisSpacing: 16,
-              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, childAspectRatio: 2.2, mainAxisSpacing: 16),
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final cat = categories[index];
@@ -292,10 +262,27 @@ class CategoryViewScreen extends StatelessWidget {
   }
 }
 
+// HALAMAN FAVORIT DENGAN TAMPILAN GAMBAR LENGKAP
 class FavoriteStoriesScreen extends StatelessWidget {
   final Function(Story) onSelectStory;
 
   const FavoriteStoriesScreen({Key? key, required this.onSelectStory}) : super(key: key);
+
+  Widget _buildCardImage(Story story) {
+    if (story.imageFile != null) {
+      return Image.file(story.imageFile!, fit: BoxFit.cover, width: double.infinity);
+    } else if (story.imageBytes != null) {
+      return Image.memory(story.imageBytes!, fit: BoxFit.cover, width: double.infinity);
+    } else if (story.imageUrl != null && story.imageUrl!.isNotEmpty) {
+      return Image.network(
+        story.imageUrl!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        errorBuilder: (_, __, ___) => Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 60))),
+      );
+    }
+    return Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 60)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -309,13 +296,44 @@ class FavoriteStoriesScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final story = favList[index];
               return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  leading: Text(story.iconEmoji, style: const TextStyle(fontSize: 30)),
-                  title: Text(story.title, style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold)),
-                  subtitle: Text('${story.category} • Asal: ${story.region}', style: GoogleFonts.poppins(fontSize: 12)),
-                  trailing: const Icon(Icons.favorite, color: Colors.red),
+                margin: const EdgeInsets.only(bottom: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
                   onTap: () => onSelectStory(story),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 160,
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFFF1D6),
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                          child: _buildCardImage(story),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(story.title, style: GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF2A1B12))),
+                                Text('Asal: ${story.region}', style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey.shade600)),
+                              ],
+                            ),
+                            const Icon(Icons.favorite, color: Colors.red, size: 28),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -351,22 +369,14 @@ class GuestAccountScreen extends StatelessWidget {
           const SizedBox(height: 30),
           ElevatedButton.icon(
             onPressed: onLoginMember,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF322219),
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF322219), minimumSize: const Size(double.infinity, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
             icon: const Icon(Icons.person, color: Color(0xFFE5A93C)),
             label: Text('Masuk sebagai Member', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: onLoginAdmin,
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              side: const BorderSide(color: Color(0xFF322219), width: 1.5),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
+            style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50), side: const BorderSide(color: Color(0xFF322219), width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
             icon: const Icon(Icons.admin_panel_settings, color: Color(0xFF322219)),
             label: Text('Masuk sebagai Admin', style: GoogleFonts.poppins(color: const Color(0xFF322219), fontWeight: FontWeight.bold)),
           ),

@@ -113,7 +113,7 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
         content: _contentController.text,
         moralValue: _moralController.text,
         imageFile: _selectedImageFile,
-        audioUrl: 'https://ia800201.us.archive.org/12/items/IndonesianStoryAudio/MalinKundang.mp3',
+        audioUrl: 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg',
         iconEmoji: _category == 'Legenda' ? '⛵' : (_category == 'Mitos' ? '🌊' : '📜'),
       );
 

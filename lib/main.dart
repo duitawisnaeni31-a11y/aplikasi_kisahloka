@@ -17,7 +17,7 @@ class KisahLokaApp extends StatefulWidget {
 }
 
 class _KisahLokaAppState extends State<KisahLokaApp> {
-  String _userRole = 'guest';
+  String _userRole = 'guest'; // 'guest', 'member', 'admin'
   int _currentIndex = 0;
   Story? _selectedStory;
 
@@ -86,13 +86,20 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF322219),
           elevation: 0,
+          leading: _userRole != 'guest'
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFFE5A93C)),
+                  tooltip: 'Kembali ke Guest',
+                  onPressed: () => _switchRole('guest'),
+                )
+              : null,
           title: Row(
             children: [
               const Icon(Icons.menu_book_rounded, color: Color(0xFFE5A93C), size: 26),
               const SizedBox(width: 8),
               Text(
                 'KisahLoka ${_userRole != 'guest' ? '(${_userRole.toUpperCase()})' : ''}',
-                style: GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                style: GoogleFonts.playfairDisplay(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
           ),
