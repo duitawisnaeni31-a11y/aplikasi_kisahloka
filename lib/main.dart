@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'models/app_models.dart';
 import 'views/admin_views.dart';
 import 'views/guest_views.dart';
-import 'views/member_views.dart';
 import 'views/story_detail_view.dart';
 
 void main() {
@@ -43,52 +42,34 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
         case 0:
           return const AdminDashboardScreen();
         case 1:
-          return const SendStoryScreen();
-        default:
-          return Center(
-            child: ElevatedButton(
-              onPressed: () => _switchRole('guest'),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF322219)),
-              child: Text('Keluar dari Admin (Ke Guest)', style: GoogleFonts.poppins(color: Colors.white)),
-            ),
-          );
-      }
-    } else if (_userRole == 'member') {
-      switch (_currentIndex) {
-        case 0:
-          return GuestHomeScreen(
-            onSelectStory: (s) => setState(() => _selectedStory = s),
-            onSwitchTab: (idx) => setState(() => _currentIndex = idx),
-          );
-        case 1:
-          return const SendStoryScreen();
-        default:
-          return Center(
-            child: ElevatedButton(
-              onPressed: () => _switchRole('guest'),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF322219)),
-              child: Text('Keluar dari Member (Ke Guest)', style: GoogleFonts.poppins(color: Colors.white)),
-            ),
-          );
-      }
-    } else {
-      switch (_currentIndex) {
-        case 0:
-        case 1:
-          return GuestHomeScreen(
-            onSelectStory: (s) => setState(() => _selectedStory = s),
-            onSwitchTab: (idx) => setState(() => _currentIndex = idx),
-          );
+          return const AddStoryScreen();
         case 2:
           return GuestAccountScreen(
             onLoginMember: () => _switchRole('member'),
             onLoginAdmin: () => _switchRole('admin'),
           );
         default:
-          return GuestHomeScreen(
-            onSelectStory: (s) => setState(() => _selectedStory = s),
-            onSwitchTab: (idx) => setState(() => _currentIndex = idx),
+          return const AdminDashboardScreen();
+      }
+    } else {
+      switch (_currentIndex) {
+        case 0:
+          return GuestHomeScreen(onSelectStory: (s) => setState(() => _selectedStory = s));
+        case 1:
+          return CategoryViewScreen(onSelectCategory: (catName) {
+            setState(() {
+              _currentIndex = 0;
+            });
+          });
+        case 2:
+          return FavoriteStoriesScreen(onSelectStory: (s) => setState(() => _selectedStory = s));
+        case 3:
+          return GuestAccountScreen(
+            onLoginMember: () => _switchRole('member'),
+            onLoginAdmin: () => _switchRole('admin'),
           );
+        default:
+          return GuestHomeScreen(onSelectStory: (s) => setState(() => _selectedStory = s));
       }
     }
   }
@@ -110,12 +91,8 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
               const Icon(Icons.menu_book_rounded, color: Color(0xFFE5A93C), size: 26),
               const SizedBox(width: 8),
               Text(
-                'KisahLoka',
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                'KisahLoka ${_userRole != 'guest' ? '(${_userRole.toUpperCase()})' : ''}',
+                style: GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
           ),
@@ -131,7 +108,7 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          title: Text('Mode Guest', style: GoogleFonts.poppins()),
+                          title: Text('Mode Guest / Pengguna', style: GoogleFonts.poppins()),
                           onTap: () {
                             _switchRole('guest');
                             Navigator.pop(context);
@@ -145,7 +122,7 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
                           },
                         ),
                         ListTile(
-                          title: Text('Mode Admin', style: GoogleFonts.poppins()),
+                          title: Text('Mode Admin (Bisa Tambah Cerita)', style: GoogleFonts.poppins()),
                           onTap: () {
                             _switchRole('admin');
                             Navigator.pop(context);
@@ -174,15 +151,16 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
               _selectedStory = null;
             });
           },
-          items: _userRole == 'guest'
+          items: _userRole == 'admin'
               ? const [
-                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
-                  BottomNavigationBarItem(icon: Icon(Icons.diamond), label: 'Kategori'),
+                  BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dasbor'),
+                  BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Tulis Cerita'),
                   BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
                 ]
               : const [
-                  BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dasbor'),
-                  BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Tulis Cerita'),
+                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+                  BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Kategori'),
+                  BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorit'),
                   BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
                 ],
         ),
