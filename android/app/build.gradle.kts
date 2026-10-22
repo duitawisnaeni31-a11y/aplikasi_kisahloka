@@ -1,8 +1,8 @@
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
-    // Menggunakan plugin Kotlin bawaan Flutter (Menghilangkan Warning Breaking Changes)
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -40,6 +40,30 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+    }
+}
+
 flutter {
     source = "../.."
+}
+
+subprojects {
+    project.configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "com.android.support" || requested.group == "androidx.annotation") {
+                // Pastikan pustaka internal selaras
+            }
+        }
+    }
+    afterEvaluate {
+        if (project.hasProperty("android")) {
+            val androidApp = project.extensions.findByName("android")
+            if (androidApp is com.android.build.gradle.BaseExtension) {
+                androidApp.compileSdkVersion(36)
+            }
+        }
+    }
 }

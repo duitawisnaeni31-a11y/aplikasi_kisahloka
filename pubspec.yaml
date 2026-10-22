@@ -10,8 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  file_picker: ^8.0.0
-
+  file_picker: ^8.3.7
 dev_dependencies:
   flutter_test:
     sdk: flutter

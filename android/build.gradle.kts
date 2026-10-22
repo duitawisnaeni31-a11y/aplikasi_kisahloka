@@ -11,22 +11,19 @@ rootProject.layout.buildDirectory.value(newBuildDir)
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
+
+    afterEvaluate {
+        if (project.hasProperty("android")) {
+            project.extensions.findByName("android")?.apply {
+                val setCompileSdk = this.javaClass.getMethod("setCompileSdkVersion", Int::class.javaPrimitiveType)
+                setCompileSdk.invoke(this, 36)
+            }
+        }
+    }
 }
 
 subprojects {
     project.evaluationDependsOn(":app")
-}
-
-// MEMAKSA SEMUA PLUGIN (TERMASUK FILE_PICKER) MENGGUNAKAN COMPILE SDK 36
-subprojects {
-    afterEvaluate {
-        if (project.hasProperty("android")) {
-            val android = project.extensions.findByName("android")
-            if (android is com.android.build.gradle.BaseExtension) {
-                android.compileSdkVersion(36)
-            }
-        }
-    }
 }
 
 tasks.register<Delete>("clean") {

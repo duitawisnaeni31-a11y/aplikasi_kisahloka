@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'models/app_models.dart';
 import 'views/guest_views.dart';
 import 'views/member_views.dart';
-import 'views/admin_views.dart';
+import 'views/story_detail_view.dart';
 
 void main() {
   runApp(const KisahLokaApp());
 }
 
 class KisahLokaApp extends StatefulWidget {
-  const KisahLokaApp({super.key});
+  const KisahLokaApp({Key? key}) : super(key: key);
 
   @override
   State<KisahLokaApp> createState() => _KisahLokaAppState();
 }
 
 class _KisahLokaAppState extends State<KisahLokaApp> {
-  String _userRole = 'guest'; // 'guest', 'member', 'admin'
+  String _userRole = 'guest';
   int _currentIndex = 0;
   Story? _selectedStory;
 
@@ -54,104 +54,83 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
             onLoginAdmin: () => _switchRole('admin'),
           );
         default:
-          return const SizedBox();
-      }
-    } else if (_userRole == 'member') {
-      switch (_currentIndex) {
-        case 0:
-          return MemberDashboardScreen(
-            onLogout: () => _switchRole('guest'),
-            onNavigateTab: (idx) => setState(() => _currentIndex = idx),
+          return GuestHomeScreen(
+            onSelectStory: (s) => setState(() => _selectedStory = s),
+            onSwitchTab: (idx) => setState(() => _currentIndex = idx),
           );
-        case 1:
-          return const FavoriteMemberScreen();
-        case 2:
-          return SendStoryScreen(
-            onSuccess: () => setState(() => _currentIndex = 0),
-          );
-        default:
-          return const SizedBox();
       }
     } else {
-      // Peran Admin
+      // Tampilan Member / Admin
       switch (_currentIndex) {
         case 0:
-          return AdminDashboardScreen(onLogout: () => _switchRole('guest'));
+          return GuestHomeScreen(
+            onSelectStory: (s) => setState(() => _selectedStory = s),
+            onSwitchTab: (idx) => setState(() => _currentIndex = idx),
+          );
         case 1:
-          return const AdminModerationScreen();
-        case 2:
-          return const AdminStoryManageScreen();
+          return const SendStoryScreen();
         default:
-          return const SizedBox();
+          return Center(
+            child: ElevatedButton(
+              onPressed: () => _switchRole('guest'),
+              child: const Text('Keluar / Switch Ke Guest'),
+            ),
+          );
       }
-    }
-  }
-
-  Widget? _buildBottomNav() {
-    if (_selectedStory != null) return null;
-
-    if (_userRole == 'guest') {
-      return BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (idx) => setState(() => _currentIndex = idx),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF1A0C05),
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.white60,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Kategori'),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Peta'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
-        ],
-      );
-    } else if (_userRole == 'member') {
-      return BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (idx) => setState(() => _currentIndex = idx),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF1A0C05),
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.white60,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dasbor'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorit'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Tulis Cerita'),
-        ],
-      );
-    } else {
-      return BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (idx) => setState(() => _currentIndex = idx),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF1A0C05),
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.white60,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.admin_panel_settings), label: 'Dasbor Admin'),
-          BottomNavigationBarItem(icon: Icon(Icons.fact_check), label: 'Moderasi'),
-          BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Kelola Cerita'),
-        ],
-      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KisahLoka',
       debugShowCheckedModeBanner: false,
+      title: 'KisahLoka',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF3D2314)),
-        useMaterial3: true,
-        fontFamily: 'Roboto',
+        primarySwatch: Colors.amber,
+        scaffoldBackgroundColor: const Color(0xFFF5EFE6),
       ),
       home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF3C2A21),
+          title: const Text('KisahLoka', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          actions: [
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.person, color: Colors.amber),
+              onSelected: _switchRole,
+              itemBuilder: (context) => const [
+                PopupMenuItem(value: 'guest', child: Text('Mode Guest')),
+                PopupMenuItem(value: 'member', child: Text('Mode Member')),
+                PopupMenuItem(value: 'admin', child: Text('Mode Admin')),
+              ],
+            )
+          ],
+        ),
         body: _buildBody(),
-        bottomNavigationBar: _buildBottomNav(),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          selectedItemColor: Colors.amber,
+          unselectedItemColor: Colors.grey,
+          backgroundColor: const Color(0xFF3C2A21),
+          type: BottomNavigationBarType.fixed,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+              _selectedStory = null;
+            });
+          },
+          items: _userRole == 'guest'
+              ? const [
+                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+                  BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Kategori'),
+                  BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Peta'),
+                  BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Akun'),
+                ]
+              : const [
+                  BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dasbor'),
+                  BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Tulis Cerita'),
+                  BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Akun'),
+                ],
+        ),
       ),
     );
   }
