@@ -37,6 +37,7 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
 
   @override
   void dispose() {
+    _audioPlayer.stop();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -47,8 +48,9 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
     } else {
       setState(() => isLoadingAudio = true);
       try {
-        String url = widget.story.audioUrl ?? 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg';
-        await _audioPlayer.play(UrlSource(url));
+        String url = widget.story.audioUrl ?? 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3';
+        await _audioPlayer.setSource(UrlSource(url));
+        await _audioPlayer.resume();
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal memutar audio: $e')));

@@ -262,7 +262,6 @@ class CategoryViewScreen extends StatelessWidget {
   }
 }
 
-// HALAMAN FAVORIT DENGAN TAMPILAN GAMBAR LENGKAP
 class FavoriteStoriesScreen extends StatelessWidget {
   final Function(Story) onSelectStory;
 
@@ -341,14 +340,16 @@ class FavoriteStoriesScreen extends StatelessWidget {
   }
 }
 
-class GuestAccountScreen extends StatelessWidget {
-  final VoidCallback onLoginMember;
-  final VoidCallback onLoginAdmin;
+class AccountProfileScreen extends StatelessWidget {
+  final String userEmail;
+  final String userRole;
+  final VoidCallback onLogout;
 
-  const GuestAccountScreen({
+  const AccountProfileScreen({
     Key? key,
-    required this.onLoginMember,
-    required this.onLoginAdmin,
+    required this.userEmail,
+    required this.userRole,
+    required this.onLogout,
   }) : super(key: key);
 
   @override
@@ -361,24 +362,48 @@ class GuestAccountScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(color: Color(0xFF322219), shape: BoxShape.circle),
-            child: const Icon(Icons.person, size: 60, color: Color(0xFFE5A93C)),
+            child: Icon(
+              userRole == 'admin' ? Icons.admin_panel_settings : Icons.person,
+              size: 60,
+              color: const Color(0xFFE5A93C),
+            ),
           ),
           const SizedBox(height: 16),
-          Text('Pengguna KisahLoka', style: GoogleFonts.playfairDisplay(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF322219))),
-          Text('Silakan masuk untuk akses fitur khusus role.', style: GoogleFonts.poppins(color: Colors.grey, fontSize: 13)),
+          Text(
+            userEmail,
+            style: GoogleFonts.playfairDisplay(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF322219)),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: userRole == 'admin' ? Colors.red.shade800 : const Color(0xFF322219),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              'ROLE: ${userRole.toUpperCase()}',
+              style: GoogleFonts.poppins(color: Colors.amber, fontSize: 11, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 30),
+
+          ListTile(
+            leading: const Icon(Icons.email, color: Color(0xFF322219)),
+            title: Text('Email Terdaftar', style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey)),
+            subtitle: Text(userEmail, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: const Color(0xFF322219))),
+          ),
+          const Divider(),
+
           const SizedBox(height: 30),
           ElevatedButton.icon(
-            onPressed: onLoginMember,
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF322219), minimumSize: const Size(double.infinity, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            icon: const Icon(Icons.person, color: Color(0xFFE5A93C)),
-            label: Text('Masuk sebagai Member', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: onLoginAdmin,
-            style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50), side: const BorderSide(color: Color(0xFF322219), width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-            icon: const Icon(Icons.admin_panel_settings, color: Color(0xFF322219)),
-            label: Text('Masuk sebagai Admin', style: GoogleFonts.poppins(color: const Color(0xFF322219), fontWeight: FontWeight.bold)),
+            onPressed: onLogout,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            icon: const Icon(Icons.logout, color: Colors.white),
+            label: Text('Keluar (Logout)', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

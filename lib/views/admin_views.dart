@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,11 +13,45 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
-  void _deleteStory(int index) {
-    setState(() {
-      globalStories.removeAt(index);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita dihapus oleh Admin.')));
+  void _confirmDelete(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext ctx) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: AlertDialog(
+            backgroundColor: const Color(0xFF322219),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(
+              'Hapus Cerita?',
+              style: GoogleFonts.playfairDisplay(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              'Apakah Anda yakin ingin menghapus cerita "${globalStories[index].title}"? Tindakan ini tidak dapat dibatalkan.',
+              style: GoogleFonts.poppins(color: Colors.white70, fontSize: 13),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text('BATAL', style: GoogleFonts.poppins(color: Colors.amber, fontWeight: FontWeight.bold)),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
+                onPressed: () {
+                  setState(() {
+                    globalStories.removeAt(index);
+                  });
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil dihapus.')));
+                },
+                child: Text('HAPUS', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -58,7 +93,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     subtitle: Text('${story.category} • Asal: ${story.region}', style: GoogleFonts.poppins(fontSize: 12)),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteStory(index),
+                      onPressed: () => _confirmDelete(context, index),
                     ),
                   ),
                 );
@@ -113,7 +148,7 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
         content: _contentController.text,
         moralValue: _moralController.text,
         imageFile: _selectedImageFile,
-        audioUrl: 'https://actions.google.com/sounds/v1/ambiences/outdoor_river.ogg',
+        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3',
         iconEmoji: _category == 'Legenda' ? '⛵' : (_category == 'Mitos' ? '🌊' : '📜'),
       );
 
