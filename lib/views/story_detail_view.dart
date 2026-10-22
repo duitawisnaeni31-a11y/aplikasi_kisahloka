@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../models/app_models.dart';
 
-class GuestDetailScreen extends StatelessWidget {
+class GuestDetailScreen extends StatefulWidget {
   final Story story;
   final VoidCallback onBack;
 
@@ -12,18 +14,81 @@ class GuestDetailScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<GuestDetailScreen> createState() => _GuestDetailScreenState();
+}
+
+class _GuestDetailScreenState extends State<GuestDetailScreen> {
+  late AudioPlayer _audioPlayer;
+  bool isPlaying = false;
+  bool isLoadingAudio = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      if (mounted) {
+        setState(() {
+          isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _toggleAudio() async {
+    if (isPlaying) {
+      await _audioPlayer.pause();
+    } else {
+      setState(() => isLoadingAudio = true);
+      try {
+        String url = widget.story.audioUrl ?? 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+        await _audioPlayer.play(UrlSource(url));
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal memutar audio: $e')),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => isLoadingAudio = false);
+      }
+    }
+  }
+
+  Widget _buildCoverImage() {
+    if (widget.story.imageBytes != null) {
+      return Image.memory(widget.story.imageBytes!, fit: BoxFit.cover);
+    } else if (widget.story.imageFile != null) {
+      return Image.file(widget.story.imageFile!, fit: BoxFit.cover);
+    } else if (widget.story.imageUrl != null && widget.story.imageUrl!.isNotEmpty) {
+      return Image.network(
+        widget.story.imageUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Center(child: Text(widget.story.iconEmoji, style: const TextStyle(fontSize: 80))),
+      );
+    }
+    return Center(child: Text(widget.story.iconEmoji, style: const TextStyle(fontSize: 80)));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5EFE6),
+      backgroundColor: const Color(0xFFF9F6EE),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3C2A21),
+        backgroundColor: const Color(0xFF322219),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.amber),
-          onPressed: onBack,
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFE5A93C)),
+          onPressed: widget.onBack,
         ),
         title: Text(
-          story.title,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          widget.story.title,
+          style: GoogleFonts.playfairDisplay(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -31,78 +96,63 @@ class GuestDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cover Cerita
             Container(
               height: 200,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.amber.shade100,
+                color: const Color(0xFFFFF1D6),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: story.imageBytes != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.memory(story.imageBytes!, fit: BoxFit.cover),
-                    )
-                  : story.imageFile != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.file(story.imageFile!, fit: BoxFit.cover),
-                        )
-                      : Center(
-                          child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80)),
-                        ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: _buildCoverImage(),
+              ),
             ),
             const SizedBox(height: 16),
-
-            // Kategori & Daerah
-            Row(
+            Wrap(
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Chip(
                   label: Text(
-                    story.category.toUpperCase(),
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                    widget.story.category.toUpperCase(),
+                    style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
                   ),
-                  backgroundColor: const Color(0xFF3C2A21),
+                  backgroundColor: const Color(0xFF322219),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '📍 Asal: ${story.region}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF3C2A21)),
-                  ),
+                Text(
+                  'Asal: ${widget.story.region}',
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: const Color(0xFF322219)),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
-            // Card Simulasi Narasi Audio
             Card(
-              color: const Color(0xFF3C2A21),
+              color: const Color(0xFF322219),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: ListTile(
-                leading: const Icon(Icons.volume_up, color: Colors.amber, size: 32),
-                title: const Text(
+                leading: const Icon(Icons.volume_up, color: Color(0xFFE5A93C), size: 32),
+                title: Text(
                   'Dengarkan Narasi Cerita',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
-                subtitle: const Text(
-                  'Fitur Audio Narasi Siap Diputar',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                subtitle: Text(
+                  isPlaying ? 'Sedang Memutar Audio...' : 'Tekan Play untuk Mendengarkan',
+                  style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12),
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.play_circle_fill, color: Colors.amber, size: 40),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Memutar Audio Narasi...')),
-                    );
-                  },
-                ),
+                trailing: isLoadingAudio
+                    ? const CircularProgressIndicator(color: Color(0xFFE5A93C))
+                    : IconButton(
+                        icon: Icon(
+                          isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                          color: const Color(0xFFE5A93C),
+                          size: 40,
+                        ),
+                        onPressed: _toggleAudio,
+                      ),
               ),
             ),
             const SizedBox(height: 16),
-
-            // Isi Cerita
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -113,41 +163,41 @@ class GuestDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.menu_book, color: Colors.amber),
-                      SizedBox(width: 8),
+                      const Icon(Icons.menu_book, color: Color(0xFFE5A93C)),
+                      const SizedBox(width: 8),
                       Text(
-                        'Isi Cerita',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF3C2A21)),
+                        'Isi Cerita Lengkap',
+                        style: GoogleFonts.playfairDisplay(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF322219)),
                       ),
                     ],
                   ),
                   const Divider(height: 24),
                   Text(
-                    story.content,
-                    style: TextStyle(fontSize: 15, height: 1.6, color: Colors.black.withOpacity(0.8)),
+                    widget.story.content,
+                    style: GoogleFonts.poppins(fontSize: 14, height: 1.6, color: Colors.black.withOpacity(0.85)),
                   ),
                   const SizedBox(height: 20),
-                  if (story.moralValue.isNotEmpty) ...[
+                  if (widget.story.moralValue.isNotEmpty) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5EFE6),
+                        color: const Color(0xFFF9F6EE),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.amber.shade300),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             '💡 Nilai / Pesan Moral:',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3C2A21)),
+                            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: const Color(0xFF322219)),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            story.moralValue,
-                            style: TextStyle(fontStyle: FontStyle.italic, color: Colors.black.withOpacity(0.7)),
+                            widget.story.moralValue,
+                            style: GoogleFonts.poppins(fontStyle: FontStyle.italic, color: Colors.black.withOpacity(0.75)),
                           ),
                         ],
                       ),

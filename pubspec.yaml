@@ -1,6 +1,7 @@
 name: aplikasi_kisahloka
-description: "Aplikasi Edukasi Cerita Rakyat Nusantara KisahLoka"
+description: "Aplikasi Edukasi Cerita dan Legenda Rakyat Nusantara KisahLoka"
 publish_to: 'none'
+
 version: 1.0.0+1
 
 environment:
@@ -9,8 +10,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Font Kustom (Playfair Display & Poppins)
+  google_fonts: ^6.1.0
+
+  # Pemutar Audio Narasi
+  audioplayers: ^6.0.0
+
+  # Pemilih Gambar dari Galeri
+  file_picker: ^8.0.0
+
+  # Ikon Tambahan
   cupertino_icons: ^1.0.8
-  file_picker: ^8.3.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -18,3 +30,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Konfigurasi Aset jika ada gambar/audio lokal di folder assets
+  assets:
+    - assets/
