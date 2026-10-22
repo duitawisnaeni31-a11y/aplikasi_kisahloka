@@ -15,10 +15,10 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   String selectedCategoryFilter = 'Semua';
 
   Widget _buildCardImage(Story story) {
-    if (story.imageFile != null) {
-      return Image.file(story.imageFile!, fit: BoxFit.cover, width: double.infinity);
-    } else if (story.imageBytes != null) {
+    if (story.imageBytes != null) {
       return Image.memory(story.imageBytes!, fit: BoxFit.cover, width: double.infinity);
+    } else if (story.imageFile != null) {
+      return Image.file(story.imageFile!, fit: BoxFit.cover, width: double.infinity);
     } else if (story.imageUrl != null && story.imageUrl!.isNotEmpty) {
       return Image.network(
         story.imageUrl!,
@@ -171,7 +171,10 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                                       IconButton(
                                         icon: Icon(story.isFavorite ? Icons.favorite : Icons.favorite_border, color: Colors.red),
                                         onPressed: () {
-                                          setState(() => story.isFavorite = !story.isFavorite);
+                                          setState(() {
+                                            story.isFavorite = !story.isFavorite;
+                                          });
+                                          saveStoriesToStorage();
                                         },
                                       )
                                     ],
@@ -268,10 +271,10 @@ class FavoriteStoriesScreen extends StatelessWidget {
   const FavoriteStoriesScreen({Key? key, required this.onSelectStory}) : super(key: key);
 
   Widget _buildCardImage(Story story) {
-    if (story.imageFile != null) {
-      return Image.file(story.imageFile!, fit: BoxFit.cover, width: double.infinity);
-    } else if (story.imageBytes != null) {
+    if (story.imageBytes != null) {
       return Image.memory(story.imageBytes!, fit: BoxFit.cover, width: double.infinity);
+    } else if (story.imageFile != null) {
+      return Image.file(story.imageFile!, fit: BoxFit.cover, width: double.infinity);
     } else if (story.imageUrl != null && story.imageUrl!.isNotEmpty) {
       return Image.network(
         story.imageUrl!,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -38,12 +39,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
                     globalStories.removeAt(index);
                   });
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil dihapus.')));
+                  await saveStoriesToStorage();
+                  if (mounted) {
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil dihapus.')));
+                  }
                 },
                 child: Text('HAPUS', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
@@ -123,13 +127,21 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
 
   String _category = 'Legenda';
   File? _selectedImageFile;
+  Uint8List? _selectedImageBytes; // Menyimpan data byte gambar HP
 
   Future<void> _pickImage() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
-      if (result != null && result.files.single.path != null) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true, // Ambil data byte langsung agar kompatibel di HP
+      );
+
+      if (result != null) {
         setState(() {
-          _selectedImageFile = File(result.files.single.path!);
+          if (result.files.single.path != null) {
+            _selectedImageFile = File(result.files.single.path!);
+          }
+          _selectedImageBytes = result.files.single.bytes;
         });
       }
     } catch (e) {
@@ -137,8 +149,14 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
     }
   }
 
-  void _submitStory() {
+  void _submitStory() async {
     if (_formKey.currentState!.validate()) {
+      // Jika pengguna memilih File tetapi bytes belum terbaca, baca manual dari file
+      Uint8List? finalBytes = _selectedImageBytes;
+      if (finalBytes == null && _selectedImageFile != null) {
+        finalBytes = await _selectedImageFile!.readAsBytes();
+      }
+
       final newStory = Story(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
@@ -148,21 +166,41 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
         content: _contentController.text,
         moralValue: _moralController.text,
         imageFile: _selectedImageFile,
-        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3',
+        imageBytes: finalBytes,
         iconEmoji: _category == 'Legenda' ? '⛵' : (_category == 'Mitos' ? '🌊' : '📜'),
       );
 
       globalStories.insert(0, newStory);
+      await saveStoriesToStorage();
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil diterbitkan!')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil diterbitkan!')));
 
-      _titleController.clear();
-      _regionController.clear();
-      _summaryController.clear();
-      _moralController.clear();
-      _contentController.clear();
-      setState(() => _selectedImageFile = null);
+        _titleController.clear();
+        _regionController.clear();
+        _summaryController.clear();
+        _moralController.clear();
+        _contentController.clear();
+        setState(() {
+          _selectedImageFile = null;
+          _selectedImageBytes = null;
+        });
+      }
     }
+  }
+
+  Widget _buildPreviewImage() {
+    if (_selectedImageBytes != null) {
+      return Image.memory(_selectedImageBytes!, height: 160, width: double.infinity, fit: BoxFit.cover);
+    } else if (_selectedImageFile != null) {
+      return Image.file(_selectedImageFile!, height: 160, width: double.infinity, fit: BoxFit.cover);
+    }
+    return Column(
+      children: [
+        const Icon(Icons.image, size: 50, color: Colors.grey),
+        Text('Belum ada gambar terpilih', style: GoogleFonts.poppins(color: Colors.grey, fontSize: 12)),
+      ],
+    );
   }
 
   @override
@@ -185,23 +223,16 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.brown.shade200)),
                 child: Column(
                   children: [
-                    _selectedImageFile != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(_selectedImageFile!, height: 160, width: double.infinity, fit: BoxFit.cover),
-                          )
-                        : Column(
-                            children: [
-                              const Icon(Icons.image, size: 50, color: Colors.grey),
-                              Text('Belum ada gambar terpilih', style: GoogleFonts.poppins(color: Colors.grey, fontSize: 12)),
-                            ],
-                          ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: _buildPreviewImage(),
+                    ),
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
                       onPressed: _pickImage,
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF322219)),
                       icon: const Icon(Icons.upload_file, color: Color(0xFFE5A93C)),
-                      label: Text(_selectedImageFile != null ? 'Ganti Foto Gambar' : 'Pilih Foto dari Galeri', style: GoogleFonts.poppins(color: Colors.white)),
+                      label: Text((_selectedImageFile != null || _selectedImageBytes != null) ? 'Ganti Foto Gambar' : 'Pilih Foto dari Galeri HP', style: GoogleFonts.poppins(color: Colors.white)),
                     ),
                   ],
                 ),

@@ -48,12 +48,14 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
     } else {
       setState(() => isLoadingAudio = true);
       try {
-        String url = widget.story.audioUrl ?? 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3';
-        await _audioPlayer.setSource(UrlSource(url));
+        String textToRead = widget.story.content.replaceAll('\n', ' ');
+        String ttsUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(textToRead)}&tl=id&client=tw-ob';
+
+        await _audioPlayer.setSource(UrlSource(ttsUrl));
         await _audioPlayer.resume();
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal memutar audio: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal memutar narasi suara: $e')));
         }
       } finally {
         if (mounted) setState(() => isLoadingAudio = false);
@@ -62,10 +64,10 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
   }
 
   Widget _buildCoverImage() {
-    if (widget.story.imageFile != null) {
-      return Image.file(widget.story.imageFile!, fit: BoxFit.cover, width: double.infinity);
-    } else if (widget.story.imageBytes != null) {
+    if (widget.story.imageBytes != null) {
       return Image.memory(widget.story.imageBytes!, fit: BoxFit.cover, width: double.infinity);
+    } else if (widget.story.imageFile != null) {
+      return Image.file(widget.story.imageFile!, fit: BoxFit.cover, width: double.infinity);
     } else if (widget.story.imageUrl != null && widget.story.imageUrl!.isNotEmpty) {
       return Image.network(
         widget.story.imageUrl!,
@@ -119,8 +121,8 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: ListTile(
                 leading: const Icon(Icons.volume_up, color: Color(0xFFE5A93C), size: 32),
-                title: Text('Dengarkan Suara Narasi Cerita', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Text(isPlaying ? 'Sedang Memutar Audio...' : 'Tekan Play untuk Mendengarkan Audio', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12)),
+                title: Text('Dengarkan Narasi Suara Cerita', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+                subtitle: Text(isPlaying ? 'Sedang Membaca Narasi Cerita...' : 'Tekan Play untuk Mendengarkan Narasi', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12)),
                 trailing: isLoadingAudio
                     ? const CircularProgressIndicator(color: Color(0xFFE5A93C))
                     : IconButton(

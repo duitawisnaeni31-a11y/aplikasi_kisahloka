@@ -5,7 +5,9 @@ import 'views/admin_views.dart';
 import 'views/guest_views.dart';
 import 'views/story_detail_view.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await loadStoriesFromStorage();
   runApp(const KisahLokaApp());
 }
 
@@ -133,7 +135,7 @@ class _KisahLokaAppState extends State<KisahLokaApp> {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                '*Catatan: Gunakan email yang mengandung kata "admin" untuk masuk sebagai Admin.',
+                                '*Gunakan email yang mengandung kata "admin" untuk masuk sebagai Admin.',
                                 style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
                               ),
                             ),
