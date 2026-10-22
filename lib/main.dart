@@ -5,9 +5,7 @@ import 'views/admin_views.dart';
 import 'views/guest_views.dart';
 import 'views/story_detail_view.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await loadStoriesFromStorage();
+void main() {
   runApp(const KisahLokaApp());
 }
 

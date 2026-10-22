@@ -11,19 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Font khusus untuk tampilan aplikasi
   google_fonts: ^6.1.0
-
-  # Pemilih gambar/file dari galeri HP
   file_picker: ^8.0.0
-
-  # Pemutar narasi suara cerita
-  audioplayers: ^6.0.0
-
-  # Penyimpanan data permanen di memori HP (supaya cerita tidak hilang)
-  shared_preferences: ^2.2.2
-
-  # Ikon bawaan
   cupertino_icons: ^1.0.6
 
 dev_dependencies:

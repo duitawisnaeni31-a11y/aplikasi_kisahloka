@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:audioplayers/audioplayers.dart';
 import '../models/app_models.dart';
 
-class GuestDetailScreen extends StatefulWidget {
+class GuestDetailScreen extends StatelessWidget {
   final Story story;
   final VoidCallback onBack;
 
@@ -13,70 +12,20 @@ class GuestDetailScreen extends StatefulWidget {
     required this.onBack,
   }) : super(key: key);
 
-  @override
-  State<GuestDetailScreen> createState() => _GuestDetailScreenState();
-}
-
-class _GuestDetailScreenState extends State<GuestDetailScreen> {
-  late AudioPlayer _audioPlayer;
-  bool isPlaying = false;
-  bool isLoadingAudio = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _audioPlayer = AudioPlayer();
-    _audioPlayer.onPlayerStateChanged.listen((state) {
-      if (mounted) {
-        setState(() {
-          isPlaying = state == PlayerState.playing;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.stop();
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
-  Future<void> _toggleAudio() async {
-    if (isPlaying) {
-      await _audioPlayer.pause();
-    } else {
-      setState(() => isLoadingAudio = true);
-      try {
-        String textToRead = widget.story.content.replaceAll('\n', ' ');
-        String ttsUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(textToRead)}&tl=id&client=tw-ob';
-
-        await _audioPlayer.setSource(UrlSource(ttsUrl));
-        await _audioPlayer.resume();
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal memutar narasi suara: $e')));
-        }
-      } finally {
-        if (mounted) setState(() => isLoadingAudio = false);
-      }
-    }
-  }
-
   Widget _buildCoverImage() {
-    if (widget.story.imageBytes != null) {
-      return Image.memory(widget.story.imageBytes!, fit: BoxFit.cover, width: double.infinity);
-    } else if (widget.story.imageFile != null) {
-      return Image.file(widget.story.imageFile!, fit: BoxFit.cover, width: double.infinity);
-    } else if (widget.story.imageUrl != null && widget.story.imageUrl!.isNotEmpty) {
+    if (story.imageBytes != null) {
+      return Image.memory(story.imageBytes!, fit: BoxFit.cover, width: double.infinity);
+    } else if (story.imageFile != null) {
+      return Image.file(story.imageFile!, fit: BoxFit.cover, width: double.infinity);
+    } else if (story.imageUrl != null && story.imageUrl!.isNotEmpty) {
       return Image.network(
-        widget.story.imageUrl!,
+        story.imageUrl!,
         fit: BoxFit.cover,
         width: double.infinity,
-        errorBuilder: (_, __, ___) => Center(child: Text(widget.story.iconEmoji, style: const TextStyle(fontSize: 80))),
+        errorBuilder: (_, __, ___) => Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80))),
       );
     }
-    return Center(child: Text(widget.story.iconEmoji, style: const TextStyle(fontSize: 80)));
+    return Center(child: Text(story.iconEmoji, style: const TextStyle(fontSize: 80)));
   }
 
   @override
@@ -87,9 +36,9 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
         backgroundColor: const Color(0xFF322219),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFE5A93C)),
-          onPressed: widget.onBack,
+          onPressed: onBack,
         ),
-        title: Text(widget.story.title, style: GoogleFonts.playfairDisplay(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(story.title, style: GoogleFonts.playfairDisplay(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -108,28 +57,11 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Chip(
-                  label: Text(widget.story.category.toUpperCase(), style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+                  label: Text(story.category.toUpperCase(), style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
                   backgroundColor: const Color(0xFF322219),
                 ),
-                Text('Asal: ${widget.story.region}', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: const Color(0xFF322219))),
+                Text('Asal: ${story.region}', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: const Color(0xFF322219))),
               ],
-            ),
-            const SizedBox(height: 12),
-
-            Card(
-              color: const Color(0xFF322219),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: ListTile(
-                leading: const Icon(Icons.volume_up, color: Color(0xFFE5A93C), size: 32),
-                title: Text('Dengarkan Narasi Suara Cerita', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Text(isPlaying ? 'Sedang Membaca Narasi Cerita...' : 'Tekan Play untuk Mendengarkan Narasi', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12)),
-                trailing: isLoadingAudio
-                    ? const CircularProgressIndicator(color: Color(0xFFE5A93C))
-                    : IconButton(
-                        icon: Icon(isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill, color: const Color(0xFFE5A93C), size: 40),
-                        onPressed: _toggleAudio,
-                      ),
-              ),
             ),
             const SizedBox(height: 16),
 
@@ -148,9 +80,9 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
                     ],
                   ),
                   const Divider(height: 24),
-                  Text(widget.story.content, style: GoogleFonts.poppins(fontSize: 14, height: 1.6, color: Colors.black.withOpacity(0.85))),
+                  Text(story.content, style: GoogleFonts.poppins(fontSize: 14, height: 1.6, color: Colors.black.withOpacity(0.85))),
                   const SizedBox(height: 20),
-                  if (widget.story.moralValue.isNotEmpty) ...[
+                  if (story.moralValue.isNotEmpty) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -163,7 +95,7 @@ class _GuestDetailScreenState extends State<GuestDetailScreen> {
                         children: [
                           Text('💡 Nilai / Pesan Moral:', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: const Color(0xFF322219))),
                           const SizedBox(height: 4),
-                          Text(widget.story.moralValue, style: GoogleFonts.poppins(fontStyle: FontStyle.italic, color: Colors.black.withOpacity(0.75))),
+                          Text(story.moralValue, style: GoogleFonts.poppins(fontStyle: FontStyle.italic, color: Colors.black.withOpacity(0.75))),
                         ],
                       ),
                     ),

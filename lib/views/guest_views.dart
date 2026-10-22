@@ -174,7 +174,6 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                                           setState(() {
                                             story.isFavorite = !story.isFavorite;
                                           });
-                                          saveStoriesToStorage();
                                         },
                                       )
                                     ],

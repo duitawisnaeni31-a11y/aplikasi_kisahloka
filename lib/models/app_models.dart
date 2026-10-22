@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Story {
   final String id;
@@ -14,7 +12,6 @@ class Story {
   final String iconEmoji;
   final String status;
   final String? imageUrl;
-  final String? audioUrl;
   final File? imageFile;
   final Uint8List? imageBytes;
   bool isFavorite;
@@ -30,52 +27,13 @@ class Story {
     this.iconEmoji = '📖',
     this.status = 'approved',
     this.imageUrl,
-    this.audioUrl,
     this.imageFile,
     this.imageBytes,
     this.isFavorite = false,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'category': category,
-      'region': region,
-      'summary': summary,
-      'content': content,
-      'moralValue': moralValue,
-      'iconEmoji': iconEmoji,
-      'status': status,
-      'imageUrl': imageUrl,
-      'audioUrl': audioUrl,
-      'isFavorite': isFavorite,
-      'imageBase64': imageBytes != null ? base64Encode(imageBytes!) : null,
-    };
-  }
-
-  factory Story.fromJson(Map<String, dynamic> json) {
-    return Story(
-      id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
-      title: json['title'] ?? '',
-      category: json['category'] ?? 'Legenda',
-      region: json['region'] ?? '',
-      summary: json['summary'] ?? '',
-      content: json['content'] ?? '',
-      moralValue: json['moralValue'] ?? '',
-      iconEmoji: json['iconEmoji'] ?? '📖',
-      status: json['status'] ?? 'approved',
-      imageUrl: json['imageUrl'],
-      audioUrl: json['audioUrl'],
-      isFavorite: json['isFavorite'] ?? false,
-      imageBytes: json['imageBase64'] != null ? base64Decode(json['imageBase64']) : null,
-    );
-  }
 }
 
-List<Story> globalStories = [];
-
-List<Story> initialDefaultStories = [
+List<Story> globalStories = [
   Story(
     id: '1',
     title: 'Sangkuriang & Tangkuban Perahu',
@@ -129,21 +87,3 @@ List<Story> initialDefaultStories = [
     isFavorite: true,
   ),
 ];
-
-Future<void> saveStoriesToStorage() async {
-  final prefs = await SharedPreferences.getInstance();
-  List<String> rawData = globalStories.map((s) => jsonEncode(s.toJson())).toList();
-  await prefs.setStringList('kisahloka_stories_key', rawData);
-}
-
-Future<void> loadStoriesFromStorage() async {
-  final prefs = await SharedPreferences.getInstance();
-  List<String>? rawData = prefs.getStringList('kisahloka_stories_key');
-
-  if (rawData != null && rawData.isNotEmpty) {
-    globalStories = rawData.map((s) => Story.fromJson(jsonDecode(s))).toList();
-  } else {
-    globalStories = List.from(initialDefaultStories);
-    await saveStoriesToStorage();
-  }
-}

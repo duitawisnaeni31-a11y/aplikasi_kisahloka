@@ -39,15 +39,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
-                onPressed: () async {
+                onPressed: () {
                   setState(() {
                     globalStories.removeAt(index);
                   });
-                  await saveStoriesToStorage();
-                  if (mounted) {
-                    Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil dihapus.')));
-                  }
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil dihapus.')));
                 },
                 child: Text('HAPUS', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
@@ -56,6 +53,23 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         );
       },
     );
+  }
+
+  Widget _buildThumbnail(Story story) {
+    if (story.imageBytes != null) {
+      return Image.memory(story.imageBytes!, width: 50, height: 50, fit: BoxFit.cover);
+    } else if (story.imageFile != null) {
+      return Image.file(story.imageFile!, width: 50, height: 50, fit: BoxFit.cover);
+    } else if (story.imageUrl != null && story.imageUrl!.isNotEmpty) {
+      return Image.network(
+        story.imageUrl!,
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Text(story.iconEmoji, style: const TextStyle(fontSize: 28)),
+      );
+    }
+    return Text(story.iconEmoji, style: const TextStyle(fontSize: 28));
   }
 
   @override
@@ -92,7 +106,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 10),
                   child: ListTile(
-                    leading: Text(story.iconEmoji, style: const TextStyle(fontSize: 30)),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        color: const Color(0xFFFFF1D6),
+                        alignment: Alignment.center,
+                        child: _buildThumbnail(story),
+                      ),
+                    ),
                     title: Text(story.title, style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold)),
                     subtitle: Text('${story.category} • Asal: ${story.region}', style: GoogleFonts.poppins(fontSize: 12)),
                     trailing: IconButton(
@@ -127,13 +150,13 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
 
   String _category = 'Legenda';
   File? _selectedImageFile;
-  Uint8List? _selectedImageBytes; // Menyimpan data byte gambar HP
+  Uint8List? _selectedImageBytes;
 
   Future<void> _pickImage() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
-        withData: true, // Ambil data byte langsung agar kompatibel di HP
+        withData: true,
       );
 
       if (result != null) {
@@ -149,14 +172,8 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
     }
   }
 
-  void _submitStory() async {
+  void _submitStory() {
     if (_formKey.currentState!.validate()) {
-      // Jika pengguna memilih File tetapi bytes belum terbaca, baca manual dari file
-      Uint8List? finalBytes = _selectedImageBytes;
-      if (finalBytes == null && _selectedImageFile != null) {
-        finalBytes = await _selectedImageFile!.readAsBytes();
-      }
-
       final newStory = Story(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
@@ -166,26 +183,23 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
         content: _contentController.text,
         moralValue: _moralController.text,
         imageFile: _selectedImageFile,
-        imageBytes: finalBytes,
+        imageBytes: _selectedImageBytes,
         iconEmoji: _category == 'Legenda' ? '⛵' : (_category == 'Mitos' ? '🌊' : '📜'),
       );
 
       globalStories.insert(0, newStory);
-      await saveStoriesToStorage();
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil diterbitkan!')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cerita berhasil diterbitkan!')));
 
-        _titleController.clear();
-        _regionController.clear();
-        _summaryController.clear();
-        _moralController.clear();
-        _contentController.clear();
-        setState(() {
-          _selectedImageFile = null;
-          _selectedImageBytes = null;
-        });
-      }
+      _titleController.clear();
+      _regionController.clear();
+      _summaryController.clear();
+      _moralController.clear();
+      _contentController.clear();
+      setState(() {
+        _selectedImageFile = null;
+        _selectedImageBytes = null;
+      });
     }
   }
 
